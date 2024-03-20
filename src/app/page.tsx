@@ -3,7 +3,7 @@
 import Svg from "./assets/Svg";
 import { boxes, card, search, tictactoe } from "./helpers/svgs";
 import { useState } from "react";
-
+import Link from "next/link";
 export default function Home() {
   const [game, setGame] = useState("");
   return (
@@ -20,7 +20,7 @@ export default function Home() {
           onMouseEnter={() => setGame("Card Game")}
           onMouseLeave={() => setGame("")}
         >
-          <Icon path={card.path} view={card.viewBox} />
+          <Icon path={card.path} view={card.viewBox} url="/cards" />
         </div>
         <div
           onMouseEnter={() => setGame("Search Game")}
@@ -59,21 +59,25 @@ function Icon({
   view,
   classlist,
   pathtags,
+  url,
 }: {
   path: string;
   view: string;
   classlist?: string;
   pathtags?: { [key: string]: any };
+  url?: string;
 }) {
   return (
-    <div className="p-4 border-4 rounded-3xl border-gray-300 cursor-pointer">
-      <Svg
-        classlist={classlist || "h-12 w-12"}
-        path={path}
-        view={view}
-        style={{ fill: "white" }}
-        pathtags={pathtags}
-      />
-    </div>
+    <Link href={url || "/"}>
+      <div className="p-4 border-4 rounded-3xl border-gray-300 cursor-pointer">
+        <Svg
+          classlist={classlist || "h-12 w-12"}
+          path={path}
+          view={view}
+          style={{ fill: "white" }}
+          pathtags={pathtags}
+        />
+      </div>
+    </Link>
   );
 }

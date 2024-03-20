@@ -3,6 +3,9 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import ConfettiScreen from "../assets/ConfettiScreen";
+import Svg from "../assets/Svg";
+import { chevronBack } from "../helpers/svgs";
+import Link from "next/link";
 interface Card {
   id: number;
   image: string;
@@ -90,6 +93,19 @@ export default function Memorypage() {
   };
   return (
     <main className="h-screen flex flex-col items-center justify-around relative">
+      <Link
+        className="absolute top-4 left-4 flex  items-center justify-center text-pink-50 font-bold text-4xl cursor-pointer gap-2 bg-indigo-900 rounded p-2
+      
+      "
+        href="/"
+      >
+        <Svg
+          path={chevronBack.path}
+          view={chevronBack.viewBox}
+          classlist="w-8 h-8 cursor-pointer fill-current "
+        />
+        return
+      </Link>
       <div className="flex flex-col gap-8 items-center">
         <div className="text-pink-50 text-7xl ">Memory Card Game</div>
         <div className="grid grid-cols-4 gap-4 w-max ">
