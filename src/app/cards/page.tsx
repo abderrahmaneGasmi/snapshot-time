@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import ConfettiScreen from "../assets/ConfettiScreen";
 interface Card {
   id: number;
   image: string;
@@ -12,6 +13,8 @@ interface Card {
 export default function Memorypage() {
   const [cards, setCards] = useState<Array<Card>>([]);
   const [selected, setSelected] = useState([] as Array<Card>);
+  const [showstars, setShowstars] = useState([] as Array<number>);
+  const [youwon, setyouwon] = useState(false);
   useEffect(() => {
     let indexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
     let cardsimages = [
@@ -45,10 +48,13 @@ export default function Memorypage() {
     if (card.isFlipped || card.isMatched) {
       return;
     }
-    if (selected.length === 2) {
+    setShowstars([]);
+    if (selected.length >= 2) {
       return;
     }
     if (selected.length === 1) {
+      if (selected[0].id === card.id) return;
+
       if (selected[0].image === card.image) {
         card.isMatched = true;
         selected[0].isMatched = true;
@@ -63,7 +69,9 @@ export default function Memorypage() {
             return c;
           });
         });
+        setShowstars([...showstars, card.id, selected[0].id]);
         setSelected([]);
+        checkwin();
         return;
       } else {
         setTimeout(() => {
@@ -74,34 +82,43 @@ export default function Memorypage() {
     // card.isFlipped = true;
     setSelected([...selected, card]);
   };
+  const checkwin = () => {
+    const allcards = cards.filter((c) => c.isMatched);
+    if (allcards.length === 16) {
+      setyouwon(true);
+    }
+  };
   return (
-    <main className="h-screen flex flex-col items-center justify-around ">
+    <main className="h-screen flex flex-col items-center justify-around relative">
       <div className="flex flex-col gap-8 items-center">
         <div className="text-pink-50 text-7xl ">Memory Card Game</div>
         <div className="grid grid-cols-4 gap-4 w-max ">
           {cards.map((card) => (
             <motion.div
               key={card.id}
-              className="w-20 h-20 rounded-xl bg-gray-200 flex items-center justify-center cursor-pointer overflow-hidden"
+              className={`${
+                showstars.includes(card.id) ? "glowstar " : ""
+              } w-20 h-20   flex items-center justify-center cursor-pointer  relative`}
               onClick={() => {
                 selectCard(card);
               }}
-              whileHover={{ scale: 1.1 }}
+              // whileHover={{ scale: 1.1 }}
             >
-              <Image
-                src={
-                  card.isMatched || selected.find((c) => c.id === card.id)
-                    ? card.image
-                    : "/card (0).png"
-                }
-                alt="icon"
-                width="80"
-                height="80"
-              />
+              <div className="bg-gray-200 z-10 rounded-xl absolute inset-0"></div>
+              {(card.isMatched || selected.find((c) => c.id === card.id)) && (
+                <Image
+                  src={card.image}
+                  alt="icon"
+                  width="80"
+                  height="80"
+                  className="relative z-20"
+                />
+              )}
             </motion.div>
           ))}
         </div>
       </div>
+      {youwon && <ConfettiScreen />}
     </main>
   );
 }
