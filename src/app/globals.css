@@ -18,7 +18,9 @@ body {
     #171a31
   );
 }
-
+html {
+  font-size: 62.5%;
+}
 @layer utilities {
   .text-balance {
     text-wrap: balance;
