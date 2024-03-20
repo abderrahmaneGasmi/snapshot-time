@@ -5,10 +5,5 @@ export default function layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <div className="memory">
-      das
-      <div className="memory__board">{children}</div>
-    </div>
-  );
+  return <div className="">{children}</div>;
 }

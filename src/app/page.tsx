@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Svg from "./assets/Svg";
 import { boxes, card, search, tictactoe } from "./helpers/svgs";
 import { useState } from "react";
