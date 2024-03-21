@@ -119,7 +119,11 @@ export const getrandomword = (oldwords: Array<string> = []) => {
     }
   }
 };
-export const choosedirection = (idx: number, length: number) => {
+export const choosedirection = (
+  idx: number,
+  length: number,
+  oldidxs: Array<number> = []
+) => {
   const directions = [
     "up",
     "down",
@@ -163,5 +167,66 @@ export const choosedirection = (idx: number, length: number) => {
   if (idx % 12 === 11 && idx > 131) {
     directions.splice(directions.indexOf("downright"), 1);
   }
+
+  // check if the word future indexes are already taken
+  if (directions.length > 0) {
+    if (directions.includes("up")) {
+      for (let i = 1; i < length; i++) {
+        if (oldidxs.includes(idx - i * 12)) {
+          directions.splice(directions.indexOf("up"), 1);
+        }
+      }
+    }
+    if (directions.includes("down")) {
+      for (let i = 1; i < length; i++) {
+        if (oldidxs.includes(idx + i * 12)) {
+          directions.splice(directions.indexOf("down"), 1);
+        }
+      }
+    }
+    if (directions.includes("left")) {
+      for (let i = 1; i < length; i++) {
+        if (oldidxs.includes(idx - i)) {
+          directions.splice(directions.indexOf("left"), 1);
+        }
+      }
+    }
+    if (directions.includes("right")) {
+      for (let i = 1; i < length; i++) {
+        if (oldidxs.includes(idx + i)) {
+          directions.splice(directions.indexOf("right"), 1);
+        }
+      }
+    }
+    if (directions.includes("upleft")) {
+      for (let i = 1; i < length; i++) {
+        if (oldidxs.includes(idx - i * 12 - i)) {
+          directions.splice(directions.indexOf("upleft"), 1);
+        }
+      }
+    }
+    if (directions.includes("upright")) {
+      for (let i = 1; i < length; i++) {
+        if (oldidxs.includes(idx - i * 12 + i)) {
+          directions.splice(directions.indexOf("upright"), 1);
+        }
+      }
+    }
+    if (directions.includes("downleft")) {
+      for (let i = 1; i < length; i++) {
+        if (oldidxs.includes(idx + i * 12 - i)) {
+          directions.splice(directions.indexOf("downleft"), 1);
+        }
+      }
+    }
+    if (directions.includes("downright")) {
+      for (let i = 1; i < length; i++) {
+        if (oldidxs.includes(idx + i * 12 + i)) {
+          directions.splice(directions.indexOf("downright"), 1);
+        }
+      }
+    }
+  }
+
   return directions[Math.floor(Math.random() * directions.length)];
 };

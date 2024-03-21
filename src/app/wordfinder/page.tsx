@@ -29,7 +29,11 @@ export default function Wordpage() {
         randomwords.map((i) => i.word)
       ).toUpperCase();
       const randomidx = Math.floor(Math.random() * 144);
-      const drection = choosedirection(randomidx, randomword.length);
+      const drection = choosedirection(
+        randomidx,
+        randomword.length,
+        randomwords.map((i) => i.idxs).flat()
+      );
 
       const word = randomword.split("");
       const wordidx = [] as number[];
