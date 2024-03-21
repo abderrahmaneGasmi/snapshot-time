@@ -94,7 +94,7 @@ export default function Memorypage() {
   return (
     <main className="h-screen flex flex-col items-center justify-around relative">
       <Link
-        className="absolute top-4 left-4 flex  items-center justify-center text-pink-50 font-bold text-4xl cursor-pointer gap-2 bg-indigo-900 rounded p-2
+        className="absolute top-4 left-4 flex  items-center justify-center text-pink-50 font-bold text-4xl cursor-pointer gap-2 bg-indigo-900 rounded p-2 z-50
       
       "
         href="/"

@@ -23,10 +23,10 @@ export default function Home() {
           <Icon path={card.path} view={card.viewBox} url="/cards" />
         </div>
         <div
-          onMouseEnter={() => setGame("Search Game")}
+          onMouseEnter={() => setGame("Cross Words Game")}
           onMouseLeave={() => setGame("")}
         >
-          <Icon path={search.path} view={search.viewBox} />
+          <Icon path={search.path} view={search.viewBox} url="/crosswords" />
         </div>
         <div
           onMouseEnter={() => setGame("Wordle Game")}
