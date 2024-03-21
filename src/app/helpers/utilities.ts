@@ -134,8 +134,9 @@ export const choosedirection = (
     "downleft",
     "downright",
   ];
-  const maxidx = 144;
+  const maxidx = 143;
   const minidx = 0;
+  if (oldidxs.includes(idx)) return "";
 
   if (idx % 12 === 0) {
     directions.splice(directions.indexOf("upleft"), 1);
@@ -182,7 +183,7 @@ export const choosedirection = (
     }
     if (directions.includes("down")) {
       for (let i = 1; i < length; i++) {
-        if (idx + i * 12 > maxidx)
+        if (idx + i * 12 > 131)
           directions.splice(directions.indexOf("down"), 1);
 
         if (oldidxs.includes(idx + i * 12)) {
