@@ -13,7 +13,8 @@ interface Word {
 export default function Wordpage() {
   const [letters, Setletters] = useState([] as Array<string>);
   const [randomwords, setRandomwords] = useState([] as Array<Word>);
-
+  const [loading, setLoading] = useState(true);
+  const maxwords = 12;
   useEffect(() => {
     // fill 144 random letters using alphabet array
 
@@ -24,7 +25,7 @@ export default function Wordpage() {
     );
 
     // make 8 words
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < maxwords; i++) {
       let drection = "";
       let randomidx = 0;
       let randomword = "";
@@ -89,8 +90,10 @@ export default function Wordpage() {
       randomwords.push(randomworditem);
     }
     Setletters(t);
-    console.log(randomwords);
     setRandomwords(randomwords);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
   }, []);
   const checkifidxexist = (idx: number) => {
     const found = randomwords.find((i) => i.idxs.includes(idx));
@@ -118,54 +121,102 @@ export default function Wordpage() {
         className="flex flex-col gap-8 items-center w-full 
       "
       >
-        <div className="text-pink-50 text-7xl ">Word finder Game</div>
-        <div
-          className="grid  w-full  justify-center gap-8
+        {loading ? (
+          <div
+            className="grid  w-full  justify-center gap-8 
         "
-          style={{
-            gridTemplateColumns: "2fr 1fr",
-          }}
-        >
-          <div
-            className="grid grid-cols-12 grid-rows-12 gap-2 border-2 rounded-md border-gray-50 p-3 w-max
-        justify-self-end "
+            style={{
+              gridTemplateColumns: "2fr 1fr",
+            }}
           >
-            {letters.map((i, o) => (
+            <div className="flex flex-col items-center justify-self-end gap-4">
+              <div className="text-pink-50 text-7xl ">Word finder Game</div>
               <div
-                className="text-3xl text-gray-100 font-bold px-6 py-4 cursor-pointer  rounded-md select-none 
-                   "
-                style={{
-                  backgroundColor: !checkifidxexist(o)
-                    ? "rgba(49, 46, 129, 0.3)"
-                    : "rgb(5, 150, 105)",
-                }}
-                key={o}
+                className="grid grid-cols-12 grid-rows-12 gap-2 border-2 rounded-md border-gray-50 p-3 w-max
+         skeltoneffect"
               >
-                {i}
+                {Array.from({ length: 144 }).map((i, o) => (
+                  <div
+                    className="text-3xl text-gray-100 font-bold px-6 py-4 cursor-pointer  rounded-md select-none  min-w-20 min-h-16
+                  border-2 border-indigo-900
+                  
+                  "
+                    key={o}
+                  ></div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div
-            className="flex flex-col min-w-80 justify-self-center gap-8
+            </div>
+            <div
+              className="flex flex-col min-w-80 justify-self-center gap-8
           
           "
-          >
-            <div className=" text-7xl text-gray-100 font-bold mx-auto">
-              Words to find
-            </div>
-            <div className="flex flex-wrap gap-4">
-              {randomwords.map((i, o) => (
-                <div
-                  className="text-2xl text-gray-100 font-bold px-6 py-4 cursor-pointer  rounded-md select-none bg-indigo-900 
+            >
+              <div className=" text-7xl text-gray-100 font-bold mx-auto">
+                Words to find
+              </div>
+              <div className="flex flex-wrap gap-4 ">
+                {Array.from({ length: 8 }).map((i, o) => (
+                  <div
+                    className="text-2xl text-gray-100 font-bold px-6 py-4 cursor-pointer  rounded-md select-none skeltoneffect min-w-40 min-h-16
                    "
-                  key={o}
-                >
-                  {i.word}
-                </div>
-              ))}
+                    key={o}
+                  ></div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div
+            className="grid  w-full  justify-center gap-8
+        "
+            style={{
+              gridTemplateColumns: "2fr 1fr",
+            }}
+          >
+            <div className="flex flex-col items-center gap-4 justify-self-end ">
+              <div className="text-pink-50 text-7xl ">Word finder Game</div>
+              <div
+                className="grid grid-cols-12 grid-rows-12 gap-2 border-2 rounded-md border-gray-50 p-3 w-max
+       "
+              >
+                {letters.map((i, o) => (
+                  <div
+                    className="text-3xl text-gray-100 font-bold px-6 py-4 cursor-pointer  rounded-md select-none 
+                   "
+                    style={{
+                      backgroundColor: !checkifidxexist(o)
+                        ? "rgba(49, 46, 129, 0.3)"
+                        : "rgb(5, 150, 105)",
+                    }}
+                    key={o}
+                  >
+                    {i}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div
+              className="flex flex-col min-w-80 justify-self-center gap-8
+          
+          "
+            >
+              <div className=" text-7xl text-gray-100 font-bold mx-auto">
+                Words to find
+              </div>
+              <div className="flex flex-wrap gap-4">
+                {randomwords.map((i, o) => (
+                  <div
+                    className="text-2xl text-gray-100 font-bold px-6 py-4 cursor-pointer  rounded-md select-none bg-indigo-900 min-w-40 min-h-16 
+                   "
+                    key={o}
+                  >
+                    {i.word}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

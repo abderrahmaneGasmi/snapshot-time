@@ -40,3 +40,22 @@ html {
     inset -20px 0 80px #0ff, inset 20px 0 300px #f0f, inset -20px 0 300px #0ff,
     0 0 50px #fff, -10px 0 80px #f0f, 10px 0 80px #0ff;
 }
+
+.skeltoneffect {
+  background: linear-gradient(
+    120deg,
+    rgba(93, 90, 186, 0.3) 25%,
+    rgba(3, 2, 47, 0.3) 50%,
+    rgba(93, 90, 186, 0.3) 75%
+  );
+  background-size: 200% 100%;
+  animation: skelton 1s infinite linear;
+}
+@keyframes skelton {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
