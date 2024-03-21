@@ -100,7 +100,7 @@ const words = {
     "running",
   ],
 };
-export const getrandomword = () => {
+export const getrandomword = (oldwords: Array<string> = []) => {
   const keys = [
     "fruits",
     "animals",
@@ -109,10 +109,15 @@ export const getrandomword = () => {
     "countries",
     "sports",
   ] as Array<keyof typeof words>;
-  const randomkey = keys[Math.floor(Math.random() * keys.length)];
-  const randomword =
-    words[randomkey][Math.floor(Math.random() * words[randomkey].length)];
-  return randomword;
+
+  while (true) {
+    const randomkey = keys[Math.floor(Math.random() * keys.length)];
+    const randomword =
+      words[randomkey][Math.floor(Math.random() * words[randomkey].length)];
+    if (!oldwords.includes(randomword)) {
+      return randomword;
+    }
+  }
 };
 export const choosedirection = (idx: number, length: number) => {
   const directions = [
