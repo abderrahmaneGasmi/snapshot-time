@@ -172,6 +172,9 @@ export const choosedirection = (
   if (directions.length > 0) {
     if (directions.includes("up")) {
       for (let i = 1; i < length; i++) {
+        if (idx - i * 12 < minidx)
+          directions.splice(directions.indexOf("up"), 1);
+
         if (oldidxs.includes(idx - i * 12)) {
           directions.splice(directions.indexOf("up"), 1);
         }
@@ -179,6 +182,9 @@ export const choosedirection = (
     }
     if (directions.includes("down")) {
       for (let i = 1; i < length; i++) {
+        if (idx + i * 12 > maxidx)
+          directions.splice(directions.indexOf("down"), 1);
+
         if (oldidxs.includes(idx + i * 12)) {
           directions.splice(directions.indexOf("down"), 1);
         }
@@ -186,6 +192,8 @@ export const choosedirection = (
     }
     if (directions.includes("left")) {
       for (let i = 1; i < length; i++) {
+        if ((idx - i) % 12 > idx % 12 || idx - i < 0)
+          directions.splice(directions.indexOf("left"), 1);
         if (oldidxs.includes(idx - i)) {
           directions.splice(directions.indexOf("left"), 1);
         }
@@ -193,6 +201,8 @@ export const choosedirection = (
     }
     if (directions.includes("right")) {
       for (let i = 1; i < length; i++) {
+        if ((idx + i) % 12 < idx % 12 || idx + i > maxidx)
+          directions.splice(directions.indexOf("right"), 1);
         if (oldidxs.includes(idx + i)) {
           directions.splice(directions.indexOf("right"), 1);
         }
@@ -200,6 +210,8 @@ export const choosedirection = (
     }
     if (directions.includes("upleft")) {
       for (let i = 1; i < length; i++) {
+        if (idx - i * 12 - i < 0 || (idx - i * 12 - i) % 12 > idx % 12)
+          directions.splice(directions.indexOf("upleft"), 1);
         if (oldidxs.includes(idx - i * 12 - i)) {
           directions.splice(directions.indexOf("upleft"), 1);
         }
@@ -207,6 +219,8 @@ export const choosedirection = (
     }
     if (directions.includes("upright")) {
       for (let i = 1; i < length; i++) {
+        if (idx - i * 12 + i < 0 || (idx - i * 12 + i) % 12 < idx % 12)
+          directions.splice(directions.indexOf("upright"), 1);
         if (oldidxs.includes(idx - i * 12 + i)) {
           directions.splice(directions.indexOf("upright"), 1);
         }
@@ -214,6 +228,8 @@ export const choosedirection = (
     }
     if (directions.includes("downleft")) {
       for (let i = 1; i < length; i++) {
+        if (idx + i * 12 - i > maxidx || (idx + i * 12 - i) % 12 > idx % 12)
+          directions.splice(directions.indexOf("downleft"), 1);
         if (oldidxs.includes(idx + i * 12 - i)) {
           directions.splice(directions.indexOf("downleft"), 1);
         }
@@ -221,6 +237,8 @@ export const choosedirection = (
     }
     if (directions.includes("downright")) {
       for (let i = 1; i < length; i++) {
+        if (idx + i * 12 + i > maxidx || (idx + i * 12 + i) % 12 < idx % 12)
+          directions.splice(directions.indexOf("downright"), 1);
         if (oldidxs.includes(idx + i * 12 + i)) {
           directions.splice(directions.indexOf("downright"), 1);
         }

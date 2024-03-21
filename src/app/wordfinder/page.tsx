@@ -25,16 +25,23 @@ export default function Wordpage() {
 
     // make 8 words
     for (let i = 0; i < 8; i++) {
-      const randomword = getrandomword(
-        randomwords.map((i) => i.word)
-      ).toUpperCase();
-      const randomidx = Math.floor(Math.random() * 144);
-      const drection = choosedirection(
-        randomidx,
-        randomword.length,
-        randomwords.map((i) => i.idxs).flat()
-      );
-
+      let drection = "";
+      let randomidx = 0;
+      let randomword = "";
+      while (true) {
+        randomword = getrandomword(
+          randomwords.map((i) => i.word)
+        ).toUpperCase();
+        randomidx = Math.floor(Math.random() * 144);
+        drection = choosedirection(
+          randomidx,
+          randomword.length,
+          randomwords.map((i) => i.idxs).flat()
+        );
+        if (drection) {
+          break;
+        }
+      }
       const word = randomword.split("");
       const wordidx = [] as number[];
       word.map((i, o) => wordidx.push(o));
@@ -130,7 +137,7 @@ export default function Wordpage() {
                 style={{
                   backgroundColor: !checkifidxexist(o)
                     ? "rgba(49, 46, 129, 0.3)"
-                    : "red",
+                    : "rgb(5, 150, 105)",
                 }}
                 key={o}
               >
