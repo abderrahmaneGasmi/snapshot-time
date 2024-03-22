@@ -131,6 +131,21 @@ export default function Wordpage() {
 
     if (letters[idx]) return "rgba(49, 46, 129, 0.3)";
   };
+  const checkifselctedletter = (idx: number) => {
+    return selectedletters.find((i) => i.idx === idx);
+  };
+  const checkifalreadyselected = (idx: number) => {
+    const found = randomwords.find((i) => i.idxs.includes(idx) && i.found);
+    if (found)
+      return {
+        found: true,
+        direction: found.direction,
+      };
+    return {
+      found: false,
+      direction: "",
+    };
+  };
   const checkselectedword = () => {
     // check if the selected word is in the random words
     const selectedword = selectedletters.map((i) => i.letter).join("");
@@ -292,7 +307,12 @@ export default function Wordpage() {
     }
   };
   return (
-    <main className="h-screen flex flex-col items-center justify-around relative">
+    <main
+      className="h-screen flex flex-col items-center justify-around relative"
+      onMouseUp={() => {
+        endselecting();
+      }}
+    >
       <Link
         className="absolute top-4 left-4 flex  items-center justify-center text-pink-50 font-bold text-4xl cursor-pointer gap-2 bg-indigo-900 rounded p-2 z-50
       
@@ -370,7 +390,7 @@ export default function Wordpage() {
               >
                 {letters.map((i, o) => (
                   <motion.div
-                    className="text-3xl text-center text-gray-100 font-bold px-6 py-4 cursor-pointer  rounded-md select-none 
+                    className="text-3xl text-center text-gray-100 font-bold px-6 py-4 cursor-pointer  rounded-md select-none relative
                    "
                     style={{
                       backgroundColor: checkifidxexist(o),
@@ -383,6 +403,104 @@ export default function Wordpage() {
                     }}
                     key={o}
                   >
+                    {checkifselctedletter(o) && (
+                      <div
+                        className={
+                          userselecting.selctingdirection === "up" ||
+                          userselecting.selctingdirection === "down"
+                            ? "absolute w-2 -inset-y-1 bg-yellow-500 z-10 "
+                            : userselecting.selctingdirection === "left" ||
+                              userselecting.selctingdirection === "right"
+                            ? "absolute h-2 -inset-x-1 bg-yellow-500 z-10 "
+                            : userselecting.selctingdirection === "upleft" ||
+                              userselecting.selctingdirection === "downright"
+                            ? "absolute  h-2 -inset-y-2 -inset-x-6 bg-yellow-500 z-10 "
+                            : userselecting.selctingdirection === "upright" ||
+                              userselecting.selctingdirection === "downleft"
+                            ? "absolute w-2  -inset-y-6 -inset-x-1 bg-yellow-500 z-10 "
+                            : ""
+                        }
+                        style={
+                          userselecting.selctingdirection === "up" ||
+                          userselecting.selctingdirection === "down"
+                            ? {
+                                left: "50%",
+                                transform: `translateX(-50%)`,
+                              }
+                            : userselecting.selctingdirection === "left" ||
+                              userselecting.selctingdirection === "right"
+                            ? {
+                                top: "50%",
+                                transform: `translateY(-50%)`,
+                              }
+                            : userselecting.selctingdirection === "upleft" ||
+                              userselecting.selctingdirection === "downright"
+                            ? {
+                                rotate: "41deg",
+                                transform: `translate(15px,16px)`,
+                              }
+                            : userselecting.selctingdirection === "upright" ||
+                              userselecting.selctingdirection === "downleft"
+                            ? {
+                                rotate: "49deg",
+                                transform: `translate(13px,-19px)`,
+                              }
+                            : {}
+                        }
+                      ></div>
+                    )}
+                    {checkifalreadyselected(o) && (
+                      <div
+                        className={
+                          checkifalreadyselected(o).direction === "up" ||
+                          checkifalreadyselected(o).direction === "down"
+                            ? "absolute w-2 -inset-y-1 bg-yellow-500 z-10 "
+                            : checkifalreadyselected(o).direction === "left" ||
+                              checkifalreadyselected(o).direction === "right"
+                            ? "absolute h-2 -inset-x-1 bg-yellow-500 z-10 "
+                            : checkifalreadyselected(o).direction ===
+                                "upleft" ||
+                              checkifalreadyselected(o).direction ===
+                                "downright"
+                            ? "absolute  h-2 -inset-y-2 -inset-x-6 bg-yellow-500 z-10 "
+                            : checkifalreadyselected(o).direction ===
+                                "upright" ||
+                              checkifalreadyselected(o).direction === "downleft"
+                            ? "absolute w-2  -inset-y-6 -inset-x-1 bg-yellow-500 z-10 "
+                            : ""
+                        }
+                        style={
+                          checkifalreadyselected(o).direction === "up" ||
+                          checkifalreadyselected(o).direction === "down"
+                            ? {
+                                left: "50%",
+                                transform: `translateX(-50%)`,
+                              }
+                            : checkifalreadyselected(o).direction === "left" ||
+                              checkifalreadyselected(o).direction === "right"
+                            ? {
+                                top: "50%",
+                                transform: `translateY(-50%)`,
+                              }
+                            : checkifalreadyselected(o).direction ===
+                                "upleft" ||
+                              checkifalreadyselected(o).direction ===
+                                "downright"
+                            ? {
+                                rotate: "41deg",
+                                transform: `translate(15px,16px)`,
+                              }
+                            : checkifalreadyselected(o).direction ===
+                                "upright" ||
+                              checkifalreadyselected(o).direction === "downleft"
+                            ? {
+                                rotate: "49deg",
+                                transform: `translate(13px,-19px)`,
+                              }
+                            : {}
+                        }
+                      ></div>
+                    )}
                     <span
                       onMouseEnter={() => {
                         selecting(o);
@@ -405,8 +523,10 @@ export default function Wordpage() {
               <div className="flex flex-wrap gap-4">
                 {randomwords.map((i, o) => (
                   <div
-                    className="text-2xl text-gray-100 font-bold px-6 py-4 cursor-pointer  rounded-md select-none bg-indigo-900 min-w-40 min-h-16 
-                   "
+                    className={
+                      "text-2xl text-gray-100 font-bold px-6 py-4 cursor-pointer  rounded-md select-none bg-indigo-900 min-w-40 min-h-16 " +
+                      (i.found ? "line-through bg-green-400" : "")
+                    }
                     key={o}
                   >
                     {i.word}
