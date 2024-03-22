@@ -125,14 +125,14 @@ export default function Wordpage() {
     if (found) {
       return "rgb(5, 150, 105)";
     }
+    if (wrongselectedletters.find((i) => i.idx === idx))
+      return "rgba(239, 68, 68, 0.8)";
     if (selectedletters.find((i) => i.idx === idx)) {
       return "rgba(236, 72, 153, 0.3)";
     }
     if (randomwords.find((i) => i.idxs.includes(idx))) {
       return "rgb(59, 130, 246,0.2)";
     }
-    if (wrongselectedletters.find((i) => i.idx === idx))
-      return "rgba(239, 68, 68, 0.8)";
 
     if (letters[idx]) return "rgba(49, 46, 129, 0.3)";
   };
@@ -261,58 +261,68 @@ export default function Wordpage() {
           }
           break;
         case "":
+          let select = false;
           if (lastidx - 12 === idx) {
             setUserselecting({
               selecting: true,
               selctingdirection: "up",
             });
+            select = true;
           }
           if (lastidx + 12 === idx) {
             setUserselecting({
               selecting: true,
               selctingdirection: "down",
             });
+            select = true;
           }
           if (lastidx - 1 === idx) {
             setUserselecting({
               selecting: true,
               selctingdirection: "left",
             });
+            select = true;
           }
           if (lastidx + 1 === idx) {
             setUserselecting({
               selecting: true,
               selctingdirection: "right",
             });
+            select = true;
           }
           if (lastidx - 13 === idx) {
             setUserselecting({
               selecting: true,
               selctingdirection: "upleft",
             });
+            select = true;
           }
           if (lastidx - 11 === idx) {
             setUserselecting({
               selecting: true,
               selctingdirection: "upright",
             });
+            select = true;
           }
           if (lastidx + 11 === idx) {
             setUserselecting({
               selecting: true,
               selctingdirection: "downleft",
             });
+            select = true;
           }
           if (lastidx + 13 === idx) {
             setUserselecting({
               selecting: true,
               selctingdirection: "downright",
             });
+            select = true;
           }
-          setSelectedletters([
-            ...selectedletters,
-            { letter: letters[idx], idx },
-          ]);
+          if (select)
+            setSelectedletters([
+              ...selectedletters,
+              { letter: letters[idx], idx },
+            ]);
           break;
 
         default:
