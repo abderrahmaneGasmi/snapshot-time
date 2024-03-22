@@ -20,6 +20,9 @@ export default function Wordpage() {
   const [letters, Setletters] = useState([] as Array<string>);
   const [randomwords, setRandomwords] = useState([] as Array<Word>);
   const [selectedletters, setSelectedletters] = useState([] as Array<Letter>);
+  const [wrongselectedletters, setwrongselectedletters] = useState(
+    [] as Array<Letter>
+  );
   const [userselecting, setUserselecting] = useState({
     selecting: false,
     selctingdirection: "" as
@@ -126,8 +129,10 @@ export default function Wordpage() {
       return "rgba(236, 72, 153, 0.3)";
     }
     if (randomwords.find((i) => i.idxs.includes(idx))) {
-      return "rgb(59, 130, 246)";
+      return "rgb(59, 130, 246,0.2)";
     }
+    if (wrongselectedletters.find((i) => i.idx === idx))
+      return "rgba(239, 68, 68, 0.8)";
 
     if (letters[idx]) return "rgba(49, 46, 129, 0.3)";
   };
@@ -159,9 +164,12 @@ export default function Wordpage() {
       });
       setRandomwords(updatedwords);
       setSelectedletters([]);
+      return true;
     }
+    return false;
   };
   const startselecting = (idx: number) => {
+    setwrongselectedletters([]);
     setUserselecting({
       selecting: true,
       selctingdirection: "",
@@ -169,7 +177,13 @@ export default function Wordpage() {
     setSelectedletters([{ letter: letters[idx], idx }]);
   };
   const endselecting = () => {
-    checkselectedword();
+    if (!checkselectedword()) {
+      setwrongselectedletters([...selectedletters]);
+      setTimeout(() => {
+        setwrongselectedletters([]);
+      }, 1000);
+    }
+
     setUserselecting({
       selecting: false,
       selctingdirection: "",
@@ -525,7 +539,7 @@ export default function Wordpage() {
                   <div
                     className={
                       "text-2xl text-gray-100 font-bold px-6 py-4 cursor-pointer  rounded-md select-none bg-indigo-900 min-w-40 min-h-16 " +
-                      (i.found ? "line-through bg-green-400" : "")
+                      (i.found ? "line-through bg-green-600" : "")
                     }
                     key={o}
                   >
