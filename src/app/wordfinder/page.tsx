@@ -5,6 +5,7 @@ import Svg from "../assets/Svg";
 import { chevronBack } from "../helpers/svgs";
 import { alphabet, choosedirection, getrandomword } from "../helpers/utilities";
 import { motion } from "framer-motion";
+import ConfettiScreen from "../assets/ConfettiScreen";
 interface Word {
   word: string;
   direction: string;
@@ -37,6 +38,11 @@ export default function Wordpage() {
       | "",
   });
   const [loading, setLoading] = useState(true);
+  const [gameended, setGameended] = useState(false);
+  const [time, setTime] = useState({
+    minutes: 0,
+    seconds: 0,
+  });
   const maxwords = 12;
   useEffect(() => {
     // fill 144 random letters using alphabet array
@@ -119,6 +125,28 @@ export default function Wordpage() {
       setLoading(false);
     }, 1000);
   }, []);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      // chrono timer for the game from
+      if (time.seconds < 59) {
+        setTime({
+          minutes: time.minutes,
+          seconds: time.seconds + 1,
+        });
+      } else {
+        setTime({
+          minutes: time.minutes - 1,
+          seconds: 0,
+        });
+      }
+    }, 1000);
+    if (gameended) clearInterval(timer);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [time, gameended]);
+
   const checkifidxexist = (idx: number) => {
     // check if the index is in the random words indexes and the word is found
     const found = randomwords.find((i) => i.idxs.includes(idx) && i.found);
@@ -164,11 +192,16 @@ export default function Wordpage() {
       });
       setRandomwords(updatedwords);
       setSelectedletters([]);
+      if (updatedwords.every((i) => i.found)) {
+        setGameended(true);
+      }
+
       return true;
     }
     return false;
   };
   const startselecting = (idx: number) => {
+    if (gameended) return;
     setwrongselectedletters([]);
     setUserselecting({
       selecting: true,
@@ -191,6 +224,8 @@ export default function Wordpage() {
     setSelectedletters([]);
   };
   const selecting = (idx: number) => {
+    if (gameended) return;
+
     if (userselecting.selecting) {
       const lastidx = selectedletters[selectedletters.length - 1].idx;
       const direction = userselecting.selctingdirection;
@@ -541,6 +576,13 @@ export default function Wordpage() {
           
           "
             >
+              <div className=" text-6xl text-gray-100 font-bold mx-auto">
+                Time
+              </div>
+              <div className=" text-6xl text-gray-100 font-bold mx-auto bg-indigo-900 rounded-md px-4 py-2">
+                {time.minutes < 10 ? "0" + time.minutes : time.minutes}:
+                {time.seconds < 10 ? "0" + time.seconds : time.seconds}
+              </div>
               <div className=" text-7xl text-gray-100 font-bold mx-auto">
                 Words to find
               </div>
@@ -561,6 +603,7 @@ export default function Wordpage() {
           </div>
         )}
       </div>
+      {gameended && <ConfettiScreen type="wordfinder" />}
     </main>
   );
 }
