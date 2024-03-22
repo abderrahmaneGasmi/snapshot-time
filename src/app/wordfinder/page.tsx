@@ -4,15 +4,35 @@ import React, { useEffect, useState } from "react";
 import Svg from "../assets/Svg";
 import { chevronBack } from "../helpers/svgs";
 import { alphabet, choosedirection, getrandomword } from "../helpers/utilities";
+import { motion } from "framer-motion";
 interface Word {
   word: string;
   direction: string;
   idxs: number[];
   found: boolean;
+  hovered: boolean;
+}
+interface Letter {
+  letter: string;
+  idx: number;
 }
 export default function Wordpage() {
   const [letters, Setletters] = useState([] as Array<string>);
   const [randomwords, setRandomwords] = useState([] as Array<Word>);
+  const [selectedletters, setSelectedletters] = useState([] as Array<Letter>);
+  const [userselecting, setUserselecting] = useState({
+    selecting: false,
+    selctingdirection: "" as
+      | "up"
+      | "down"
+      | "left"
+      | "right"
+      | "upleft"
+      | "upright"
+      | "downleft"
+      | "downright"
+      | "",
+  });
   const [loading, setLoading] = useState(true);
   const maxwords = 12;
   useEffect(() => {
@@ -51,6 +71,7 @@ export default function Wordpage() {
         direction: drection,
         idxs: [] as number[],
         found: false,
+        hovered: false,
       };
 
       wordidx.map((i, o) => {
@@ -96,11 +117,179 @@ export default function Wordpage() {
     }, 1000);
   }, []);
   const checkifidxexist = (idx: number) => {
-    const found = randomwords.find((i) => i.idxs.includes(idx));
+    // check if the index is in the random words indexes and the word is found
+    const found = randomwords.find((i) => i.idxs.includes(idx) && i.found);
     if (found) {
-      return true;
+      return "rgb(5, 150, 105)";
     }
-    return false;
+    if (selectedletters.find((i) => i.idx === idx)) {
+      return "rgba(236, 72, 153, 0.3)";
+    }
+    if (randomwords.find((i) => i.idxs.includes(idx))) {
+      return "rgb(59, 130, 246)";
+    }
+
+    if (letters[idx]) return "rgba(49, 46, 129, 0.3)";
+  };
+  const checkselectedword = () => {
+    // check if the selected word is in the random words
+    const selectedword = selectedletters.map((i) => i.letter).join("");
+    const found = randomwords.find((i) => i.word === selectedword);
+    if (found) {
+      const updatedwords = randomwords.map((i) => {
+        if (i.word === selectedword) {
+          return { ...i, found: true };
+        }
+        return i;
+      });
+      setRandomwords(updatedwords);
+      setSelectedletters([]);
+    }
+  };
+  const startselecting = (idx: number) => {
+    setUserselecting({
+      selecting: true,
+      selctingdirection: "",
+    });
+    setSelectedletters([{ letter: letters[idx], idx }]);
+  };
+  const endselecting = () => {
+    checkselectedword();
+    setUserselecting({
+      selecting: false,
+      selctingdirection: "",
+    });
+    setSelectedletters([]);
+  };
+  const selecting = (idx: number) => {
+    if (userselecting.selecting) {
+      const lastidx = selectedletters[selectedletters.length - 1].idx;
+      const direction = userselecting.selctingdirection;
+      switch (direction) {
+        case "up":
+          if (lastidx - 12 === idx) {
+            setSelectedletters([
+              ...selectedletters,
+              { letter: letters[idx], idx },
+            ]);
+          }
+
+          break;
+        case "down":
+          if (lastidx + 12 === idx) {
+            setSelectedletters([
+              ...selectedletters,
+              { letter: letters[idx], idx },
+            ]);
+          }
+          break;
+        case "left":
+          if (lastidx - 1 === idx) {
+            setSelectedletters([
+              ...selectedletters,
+              { letter: letters[idx], idx },
+            ]);
+          }
+          break;
+        case "right":
+          if (lastidx + 1 === idx) {
+            setSelectedletters([
+              ...selectedletters,
+              { letter: letters[idx], idx },
+            ]);
+          }
+          break;
+        case "upleft":
+          if (lastidx - 13 === idx) {
+            setSelectedletters([
+              ...selectedletters,
+              { letter: letters[idx], idx },
+            ]);
+          }
+          break;
+        case "upright":
+          if (lastidx - 11 === idx) {
+            setSelectedletters([
+              ...selectedletters,
+              { letter: letters[idx], idx },
+            ]);
+          }
+          break;
+        case "downleft":
+          if (lastidx + 11 === idx) {
+            setSelectedletters([
+              ...selectedletters,
+              { letter: letters[idx], idx },
+            ]);
+          }
+          break;
+        case "downright":
+          if (lastidx + 13 === idx) {
+            setSelectedletters([
+              ...selectedletters,
+              { letter: letters[idx], idx },
+            ]);
+          }
+          break;
+        case "":
+          if (lastidx - 12 === idx) {
+            setUserselecting({
+              selecting: true,
+              selctingdirection: "up",
+            });
+          }
+          if (lastidx + 12 === idx) {
+            setUserselecting({
+              selecting: true,
+              selctingdirection: "down",
+            });
+          }
+          if (lastidx - 1 === idx) {
+            setUserselecting({
+              selecting: true,
+              selctingdirection: "left",
+            });
+          }
+          if (lastidx + 1 === idx) {
+            setUserselecting({
+              selecting: true,
+              selctingdirection: "right",
+            });
+          }
+          if (lastidx - 13 === idx) {
+            setUserselecting({
+              selecting: true,
+              selctingdirection: "upleft",
+            });
+          }
+          if (lastidx - 11 === idx) {
+            setUserselecting({
+              selecting: true,
+              selctingdirection: "upright",
+            });
+          }
+          if (lastidx + 11 === idx) {
+            setUserselecting({
+              selecting: true,
+              selctingdirection: "downleft",
+            });
+          }
+          if (lastidx + 13 === idx) {
+            setUserselecting({
+              selecting: true,
+              selctingdirection: "downright",
+            });
+          }
+          setSelectedletters([
+            ...selectedletters,
+            { letter: letters[idx], idx },
+          ]);
+          break;
+
+        default:
+          break;
+      }
+    }
   };
   return (
     <main className="h-screen flex flex-col items-center justify-around relative">
@@ -180,18 +369,28 @@ export default function Wordpage() {
        "
               >
                 {letters.map((i, o) => (
-                  <div
-                    className="text-3xl text-gray-100 font-bold px-6 py-4 cursor-pointer  rounded-md select-none 
+                  <motion.div
+                    className="text-3xl text-center text-gray-100 font-bold px-6 py-4 cursor-pointer  rounded-md select-none 
                    "
                     style={{
-                      backgroundColor: !checkifidxexist(o)
-                        ? "rgba(49, 46, 129, 0.3)"
-                        : "rgb(5, 150, 105)",
+                      backgroundColor: checkifidxexist(o),
+                    }}
+                    onMouseDown={() => {
+                      startselecting(o);
+                    }}
+                    onMouseUp={() => {
+                      endselecting();
                     }}
                     key={o}
                   >
-                    {i}
-                  </div>
+                    <span
+                      onMouseEnter={() => {
+                        selecting(o);
+                      }}
+                    >
+                      {i}
+                    </span>
+                  </motion.div>
                 ))}
               </div>
             </div>
