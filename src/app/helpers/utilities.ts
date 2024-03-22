@@ -114,7 +114,8 @@ export const getrandomword = (oldwords: Array<string> = []) => {
     const randomkey = keys[Math.floor(Math.random() * keys.length)];
     const randomword =
       words[randomkey][Math.floor(Math.random() * words[randomkey].length)];
-    if (!oldwords.includes(randomword)) {
+
+    if (!oldwords.includes(randomword.toUpperCase())) {
       return randomword;
     }
   }
