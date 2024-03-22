@@ -525,13 +525,13 @@ export default function Wordpage() {
                         }
                       ></div>
                     )}
+                    <span>{i}</span>
                     <span
                       onMouseEnter={() => {
                         selecting(o);
                       }}
-                    >
-                      {i}
-                    </span>
+                      className="absolute inset-3 z-40"
+                    ></span>
                   </motion.div>
                 ))}
               </div>
