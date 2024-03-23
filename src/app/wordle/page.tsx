@@ -4,11 +4,13 @@ import React, { useEffect, useState } from "react";
 import Svg from "../assets/Svg";
 import { chevronBack } from "../helpers/svgs";
 import { alphabetinquerty, getrandomword } from "../helpers/utilities";
+import ConfettiScreen from "../assets/ConfettiScreen";
 export default function Wordlepage() {
   const tries = 6;
   const [word, setWord] = useState("");
   const [loading, setLoading] = useState(true);
   const [acceptedletters, setAcceptedletters] = useState(alphabetinquerty);
+  const [gameended, setGameended] = useState(false);
   const [currenttry, setCurrenttry] = useState({
     word: "",
     tries: 0,
@@ -20,9 +22,13 @@ export default function Wordlepage() {
   }, []);
 
   useEffect(() => {
+    if (currenttry.tries === tries) {
+      return setGameended(true);
+    }
     const wordleboard = document.getElementById("wordleboard");
     if (!wordleboard) return;
     const wordleboardevent = (e: MouseEvent) => {
+      if (gameended) return;
       const target = e.target as HTMLElement;
       target.classList.add("bg-indigo-500");
       setTimeout(() => {
@@ -36,9 +42,9 @@ export default function Wordlepage() {
       } else if (target.innerText === "Enter") {
         if (currenttry.word.length !== word.length)
           return console.log("Word is not complete");
-
         if (currenttry.word === word) {
-          console.log("You won");
+          setWordshistoty([...wordshistoty, currenttry.word]);
+          setGameended(true);
         } else {
           setWordshistoty([...wordshistoty, currenttry.word]);
           setCurrenttry({
@@ -67,7 +73,6 @@ export default function Wordlepage() {
       if (key === "ENTER") key = "Enter";
       if (alphabetinquerty.includes(key) || key === "backspace") {
         const target = document.getElementById(key) as HTMLElement;
-        console.log(target);
         target?.click();
         //     const target = document.querySelector(
         //       `#wordleboard > div:nth-child(${alphabetinquerty.indexOf(e.key) + 1})`
@@ -80,7 +85,7 @@ export default function Wordlepage() {
       wordleboard.removeEventListener("click", wordleboardevent);
       window.removeEventListener("keydown", keyevent);
     };
-  }, [currenttry, word, wordshistoty]);
+  }, [currenttry, word, wordshistoty, gameended]);
   const getcurrentletter = (idx: number, lineidx: number) => {
     if (currenttry.tries === lineidx && currenttry.word[idx]) {
       return currenttry.word[idx];
@@ -95,17 +100,18 @@ export default function Wordlepage() {
 
     if (lineidx + 1 <= wordshistoty.length) {
       if (word[idx] === wordshistoty[lineidx][idx]) {
-        return "bg-green-500 text-gray-200";
+        return "bg-green-500 text-gray-200 hover:bg-green-500";
       }
 
       if (word.includes(wordshistoty[lineidx][idx])) {
-        return "bg-yellow-500 text-gray-200";
+        return "bg-yellow-500 text-gray-200 hover:bg-yellow-500";
       }
-      return "bg-gray-400 text-gray-200";
+      return "bg-gray-400 text-gray-200 hover:bg-gray-400";
     }
     return "bg-gray-200 text-gray-500";
   };
   useEffect(() => {
+    if (gameended) return;
     wordshistoty.forEach((wordwe) => {
       // get the letters that exist in wordwe but not in word
       const letters = wordwe
@@ -116,7 +122,7 @@ export default function Wordlepage() {
         prev.filter((letter) => !letters.includes(letter))
       );
     });
-  }, [wordshistoty, word, acceptedletters]);
+  }, [wordshistoty, word, gameended]);
 
   return (
     <main className="h-screen flex flex-col items-center justify-around relative">
@@ -190,6 +196,7 @@ export default function Wordlepage() {
       (!loading &&(
       <div className="text-gray-200 text-3xl font-bold ">{word}</div>
       ))
+      {gameended && <ConfettiScreen type="wordle" />}
     </main>
   );
 }
