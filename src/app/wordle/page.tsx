@@ -44,6 +44,10 @@ export default function Wordlepage() {
           });
         }
       } else {
+        if (currenttry.word.length >= word.length) {
+          return console.log("Word is complete");
+        }
+
         setCurrenttry({
           word: currenttry.word + target.innerText,
           tries: currenttry.tries,
@@ -74,7 +78,15 @@ export default function Wordlepage() {
       window.removeEventListener("keydown", keyevent);
     };
   }, [currenttry, word]);
-
+  const getcurrentletter = (idx: number, lineidx: number) => {
+    if (currenttry.tries === lineidx && currenttry.word[idx]) {
+      return currenttry.word[idx];
+    }
+    if (wordshistoty.length > lineidx && wordshistoty[lineidx][idx]) {
+      return wordshistoty[lineidx][idx];
+    }
+    return "";
+  };
   return (
     <main className="h-screen flex flex-col items-center justify-around relative">
       <Link
@@ -105,10 +117,7 @@ export default function Wordlepage() {
                     className="bg-gray-200 z-10 rounded-xl w-20 h-20 flex items-center justify-center"
                   >
                     <div className=" text-5xl font-bold text-gray-600">
-                      {currenttry.tries === idx1 && currenttry.word[idx2]
-                        ? currenttry.word[idx2]
-                        : wordshistoty.length > idx1 &&
-                          wordshistoty[idx1][idx2]}
+                      {getcurrentletter(idx2, idx1)}
                     </div>
                   </div>
                 ))}
