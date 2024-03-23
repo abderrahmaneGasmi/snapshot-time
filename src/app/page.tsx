@@ -1,7 +1,7 @@
 "use client";
 
 import Svg from "./assets/Svg";
-import { boxes, card, search, tictactoe } from "./helpers/svgs";
+import { boxes, card, mine, search, snake, tictactoe } from "./helpers/svgs";
 import { useState } from "react";
 import Link from "next/link";
 export default function Home() {
@@ -32,7 +32,7 @@ export default function Home() {
           onMouseEnter={() => setGame("Wordle Game")}
           onMouseLeave={() => setGame("")}
         >
-          <Icon path={boxes.path} view={boxes.viewBox} />
+          <Icon path={boxes.path} view={boxes.viewBox} url="/wordle" />
         </div>
         <div
           onMouseEnter={() => setGame("Tic Tac Toe Game")}
@@ -49,6 +49,18 @@ export default function Home() {
               strokeLinejoin: "round",
             }}
           />
+        </div>
+        <div
+          onMouseEnter={() => setGame("Minesweeper Game")}
+          onMouseLeave={() => setGame("")}
+        >
+          <Icon path={mine.path} view={mine.viewBox} />
+        </div>
+        <div
+          onMouseEnter={() => setGame("Snake Game")}
+          onMouseLeave={() => setGame("")}
+        >
+          <Icon path={snake.path} view={snake.viewBox} />
         </div>
       </div>
     </main>
