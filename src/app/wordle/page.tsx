@@ -3,12 +3,10 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Svg from "../assets/Svg";
 import { chevronBack } from "../helpers/svgs";
-import { motion } from "framer-motion";
 import { alphabetinquerty, getrandomword } from "../helpers/utilities";
 export default function Wordlepage() {
   const tries = 6;
-  const [word, setWord] = useState(getrandomword());
-  const [acceptedletters, setAcceptedletters] = useState([]);
+  const [word, setWord] = useState("");
   const [loading, setLoading] = useState(true);
   const [currenttry, setCurrenttry] = useState({
     word: "",
@@ -16,7 +14,7 @@ export default function Wordlepage() {
   });
   const [wordshistoty, setWordshistoty] = useState([] as string[]);
   useEffect(() => {
-    setWord(getrandomword());
+    setWord(getrandomword().toUpperCase());
     setLoading(false);
   }, []);
 
@@ -81,7 +79,7 @@ export default function Wordlepage() {
       wordleboard.removeEventListener("click", wordleboardevent);
       window.removeEventListener("keydown", keyevent);
     };
-  }, [currenttry, word]);
+  }, [currenttry, word, wordshistoty]);
   const getcurrentletter = (idx: number, lineidx: number) => {
     if (currenttry.tries === lineidx && currenttry.word[idx]) {
       return currenttry.word[idx];
@@ -90,6 +88,21 @@ export default function Wordlepage() {
       return wordshistoty[lineidx][idx];
     }
     return "";
+  };
+  const getlettercolor = (idx: number, lineidx: number) => {
+    if (wordshistoty.length === 0) return "bg-gray-200";
+
+    if (lineidx + 1 <= wordshistoty.length) {
+      if (word[idx] === wordshistoty[lineidx][idx]) {
+        return "bg-green-500 text-gray-200";
+      }
+
+      if (word.includes(wordshistoty[lineidx][idx])) {
+        return "bg-yellow-500 text-gray-200";
+      }
+      return "bg-gray-400 text-gray-200";
+    }
+    return "bg-gray-200 text-gray-500";
   };
   return (
     <main className="h-screen flex flex-col items-center justify-around relative">
@@ -118,9 +131,12 @@ export default function Wordlepage() {
                 {Array.from({ length: word.length }).map((_, idx2) => (
                   <div
                     key={idx2}
-                    className="bg-gray-200 z-10 rounded-xl w-20 h-20 flex items-center justify-center"
+                    className={`z-10 rounded-xl w-20 h-20 flex items-center justify-center cursor-pointer relative hover:bg-indigo-200 ${getlettercolor(
+                      idx2,
+                      idx1
+                    )}`}
                   >
-                    <div className=" text-5xl font-bold text-gray-600">
+                    <div className=" text-5xl font-bold ">
                       {getcurrentletter(idx2, idx1)}
                     </div>
                   </div>
@@ -151,6 +167,9 @@ export default function Wordlepage() {
           </div>
         </div>
       )}
+      (!loading &&(
+      <div className="text-gray-200 text-3xl font-bold ">{word}</div>
+      ))
     </main>
   );
 }
