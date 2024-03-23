@@ -25,6 +25,10 @@ export default function Wordlepage() {
     if (!wordleboard) return;
     const wordleboardevent = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+      target.classList.add("bg-indigo-500");
+      setTimeout(() => {
+        target.classList.remove("bg-indigo-500");
+      }, 200);
       if (target.innerText === "⌫") {
         setCurrenttry({
           word: currenttry.word.slice(0, -1),
@@ -137,7 +141,7 @@ export default function Wordlepage() {
                 id={letter === "⌫" ? "backspace" : letter}
                 className={`${
                   letter === "Enter" || letter == "⌫" ? "w-40" : "w-20"
-                } bg-indigo-100 z-10 rounded-xl h-16 flex items-center justify-center cursor-pointer relative hover:bg-indigo-200`}
+                } bg-indigo-100 z-10 rounded-xl h-16 flex items-center justify-center cursor-pointer relative hover:bg-indigo-200 `}
               >
                 <div className="absolute inset-0 flex items-center justify-center text-3xl font-bold text-gray-800">
                   {letter}
