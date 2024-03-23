@@ -14,6 +14,7 @@ export default function Wordlepage() {
     word: "",
     tries: 0,
   });
+  const [wordshistoty, setWordshistoty] = useState([] as string[]);
   useEffect(() => {
     setWord(getrandomword());
     setLoading(false);
@@ -22,7 +23,7 @@ export default function Wordlepage() {
   useEffect(() => {
     const wordleboard = document.getElementById("wordleboard");
     if (!wordleboard) return;
-    wordleboard.addEventListener("click", (e) => {
+    const wordleboardevent = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (target.innerText === "⌫") {
         setCurrenttry({
@@ -30,9 +31,13 @@ export default function Wordlepage() {
           tries: currenttry.tries,
         });
       } else if (target.innerText === "Enter") {
+        if (currenttry.word.length !== word.length)
+          return console.log("Word is not complete");
+
         if (currenttry.word === word) {
           console.log("You won");
         } else {
+          setWordshistoty([...wordshistoty, currenttry.word]);
           setCurrenttry({
             word: "",
             tries: currenttry.tries + 1,
@@ -44,7 +49,30 @@ export default function Wordlepage() {
           tries: currenttry.tries,
         });
       }
-    });
+    };
+
+    wordleboard.addEventListener("click", wordleboardevent);
+
+    // add keydown event
+    const keyevent = (e: KeyboardEvent) => {
+      let key = e.key.toUpperCase();
+      if (key === "BACKSPACE") key = "backspace";
+      if (key === "ENTER") key = "Enter";
+      if (alphabetinquerty.includes(key) || key === "backspace") {
+        const target = document.getElementById(key) as HTMLElement;
+        console.log(target);
+        target?.click();
+        //     const target = document.querySelector(
+        //       `#wordleboard > div:nth-child(${alphabetinquerty.indexOf(e.key) + 1})`
+        //     ) as HTMLElement;
+        //     target.click();
+      }
+    };
+    window.addEventListener("keydown", keyevent);
+    return () => {
+      wordleboard.removeEventListener("click", wordleboardevent);
+      window.removeEventListener("keydown", keyevent);
+    };
   }, [currenttry, word]);
 
   return (
@@ -79,7 +107,8 @@ export default function Wordlepage() {
                     <div className=" text-5xl font-bold text-gray-600">
                       {currenttry.tries === idx1 && currenttry.word[idx2]
                         ? currenttry.word[idx2]
-                        : ""}
+                        : wordshistoty.length > idx1 &&
+                          wordshistoty[idx1][idx2]}
                     </div>
                   </div>
                 ))}
@@ -96,6 +125,7 @@ export default function Wordlepage() {
             {alphabetinquerty.map((letter, idx) => (
               <div
                 key={idx}
+                id={letter === "⌫" ? "backspace" : letter}
                 className={`${
                   letter === "Enter" || letter == "⌫" ? "w-40" : "w-20"
                 } bg-indigo-100 z-10 rounded-xl h-16 flex items-center justify-center cursor-pointer relative hover:bg-indigo-200`}
