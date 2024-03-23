@@ -8,6 +8,7 @@ export default function Wordlepage() {
   const tries = 6;
   const [word, setWord] = useState("");
   const [loading, setLoading] = useState(true);
+  const [acceptedletters, setAcceptedletters] = useState(alphabetinquerty);
   const [currenttry, setCurrenttry] = useState({
     word: "",
     tries: 0,
@@ -104,6 +105,19 @@ export default function Wordlepage() {
     }
     return "bg-gray-200 text-gray-500";
   };
+  useEffect(() => {
+    wordshistoty.forEach((wordwe) => {
+      // get the letters that exist in wordwe but not in word
+      const letters = wordwe
+        .split("")
+        .filter((letter) => !word.includes(letter));
+      // remove the letters from acceptedletters
+      setAcceptedletters((prev) =>
+        prev.filter((letter) => !letters.includes(letter))
+      );
+    });
+  }, [wordshistoty, word, acceptedletters]);
+
   return (
     <main className="h-screen flex flex-col items-center justify-around relative">
       <Link
@@ -157,7 +171,13 @@ export default function Wordlepage() {
                 id={letter === "⌫" ? "backspace" : letter}
                 className={`${
                   letter === "Enter" || letter == "⌫" ? "w-40" : "w-20"
-                } bg-indigo-100 z-10 rounded-xl h-16 flex items-center justify-center cursor-pointer relative hover:bg-indigo-200 `}
+                } ${
+                  acceptedletters.includes(letter)
+                    ? "bg-indigo-100"
+                    : "bg-gray-500 text-gray-200"
+                } 
+                
+                 z-10 rounded-xl h-16 flex items-center justify-center cursor-pointer relative hover:bg-indigo-200 `}
               >
                 <div className="absolute inset-0 flex items-center justify-center text-3xl font-bold text-gray-800">
                   {letter}
