@@ -5,12 +5,16 @@ import Svg from "../assets/Svg";
 import { chevronBack } from "../helpers/svgs";
 import { alphabetinquerty, getrandomword } from "../helpers/utilities";
 import ConfettiScreen from "../assets/ConfettiScreen";
+import { motion } from "framer-motion";
 export default function Wordlepage() {
   const tries = 6;
   const [word, setWord] = useState("");
   const [loading, setLoading] = useState(true);
   const [acceptedletters, setAcceptedletters] = useState(alphabetinquerty);
-  const [gameended, setGameended] = useState(false);
+  const [gameended, setGameended] = useState({
+    ended: false,
+    status: "notyet" as "won" | "lost" | "notyet",
+  });
   const [currenttry, setCurrenttry] = useState({
     word: "",
     tries: 0,
@@ -23,12 +27,15 @@ export default function Wordlepage() {
 
   useEffect(() => {
     if (currenttry.tries === tries) {
-      return setGameended(true);
+      return setGameended({
+        ended: true,
+        status: "lost",
+      });
     }
     const wordleboard = document.getElementById("wordleboard");
     if (!wordleboard) return;
     const wordleboardevent = (e: MouseEvent) => {
-      if (gameended) return;
+      if (gameended.ended) return;
       const target = e.target as HTMLElement;
       target.classList.add("bg-indigo-500");
       setTimeout(() => {
@@ -44,7 +51,10 @@ export default function Wordlepage() {
           return console.log("Word is not complete");
         if (currenttry.word === word) {
           setWordshistoty([...wordshistoty, currenttry.word]);
-          setGameended(true);
+          setGameended({
+            ended: true,
+            status: "won",
+          });
         } else {
           setWordshistoty([...wordshistoty, currenttry.word]);
           setCurrenttry({
@@ -111,7 +121,7 @@ export default function Wordlepage() {
     return "bg-gray-200 text-gray-500";
   };
   useEffect(() => {
-    if (gameended) return;
+    if (gameended.ended) return;
     wordshistoty.forEach((wordwe) => {
       // get the letters that exist in wordwe but not in word
       const letters = wordwe
@@ -196,7 +206,42 @@ export default function Wordlepage() {
       (!loading &&(
       <div className="text-gray-200 text-3xl font-bold ">{word}</div>
       ))
-      {gameended && <ConfettiScreen type="wordle" />}
+      {gameended.status === "won" && <ConfettiScreen type="wordle" />}
+      {gameended.status === "lost" && (
+        <motion.div
+          className="
+        absolute z-50  backdrop-filter backdrop-blur-xl glowstar pd-8 rounded-xl min-w-80 flex flex-col items-center justify-center 
+        "
+          initial={{
+            opacity: 0,
+            scale: 0,
+            x: "0%",
+            y: "0%",
+            //   transformOrigin: "20% 20%",
+          }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1 }}
+          style={{
+            minHeight: "40rem",
+            padding: "0 2rem",
+          }}
+        >
+          <div className="text-9xl text-pink-50 font-bold mx-auto text-center mb-4">
+            You Lost the game
+          </div>
+          <span className="text-4xl text-pink-50 ">
+            The word was <span className="text-yellow-500">{word}</span>
+          </span>
+          <div
+            className="bg-pink-50 text-white px-4 py-2 rounded-md mt-4 cursor-pointer text-5xl font-bold bg-yellow-500"
+            onClick={() => {
+              window.location.reload();
+            }}
+          >
+            Play Again
+          </div>
+        </motion.div>
+      )}
     </main>
   );
 }
