@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { chevronBack, o, x } from "../helpers/svgs";
 import Link from "next/link";
 import Svg from "../assets/Svg";
@@ -15,13 +15,28 @@ export default function TicTacpage() {
       O: 0,
     },
   });
+
+  useEffect(() => {
+    if (gameended.winner || gameended.isDraw) {
+      // setTimeout(() => {
+      //     setBoard(["", "", "", "", "", "", "", "", ""]);
+      //     setGameended({
+      //     ...gameended,
+      //     winner: "",
+      //     isDraw: false,
+      //     });
+      // }, 3000);
+      return;
+    }
+    checkWinner();
+  }, [board]);
+
   const mark = (index: number) => {
     if (board[index] === "" && !gameended.winner) {
       const newBoard = [...board];
       newBoard[index] = turn;
       setBoard(newBoard);
       setTurn(turn === "X" ? "O" : "X");
-      checkWinner();
     }
   };
   const checkWinner = () => {
@@ -74,110 +89,110 @@ export default function TicTacpage() {
         <div className="text-pink-50 text-7xl ">Tic Tac Toe Game</div>
         <div className="grid grid-cols-3 grid-rows-3 w-96 h-96">
           <div
-            className="flex items-center justify-center text-gray-50"
+            className="flex items-center justify-center text-gray-50 cursor-pointer"
             onClick={() => mark(0)}
           >
             {board[0] && (
               <Svg
                 path={board[0] === "X" ? x.path : o.path}
                 view={board[0] === "X" ? x.viewBox : o.viewBox}
-                classlist="w-20 h-20 cursor-pointer fill-current "
+                classlist="w-20 h-20  fill-current "
               />
             )}
           </div>
           <div
-            className="flex items-center justify-center  border-l-2 border-r-2  border-blue-50 text-gray-50"
+            className="flex items-center justify-center  border-l-2 border-r-2  border-blue-50 text-gray-50 cursor-pointer"
             onClick={() => mark(1)}
           >
             {board[1] && (
               <Svg
                 path={board[1] === "X" ? x.path : o.path}
                 view={board[1] === "X" ? x.viewBox : o.viewBox}
-                classlist="w-20 h-20 cursor-pointer fill-current "
+                classlist="w-20 h-20  fill-current "
               />
             )}
           </div>
           <div
-            className="flex items-center justify-center text-gray-50"
+            className="flex items-center justify-center text-gray-50 cursor-pointer"
             onClick={() => mark(2)}
           >
             {board[2] && (
               <Svg
                 path={board[2] === "X" ? x.path : o.path}
                 view={board[2] === "X" ? x.viewBox : o.viewBox}
-                classlist="w-20 h-20 cursor-pointer fill-current "
+                classlist="w-20 h-20  fill-current "
               />
             )}
           </div>
           <div
-            className="flex items-center justify-center  border-t-2 border-b-2 border-blue-50 text-gray-50"
+            className="flex items-center justify-center  border-t-2 border-b-2 border-blue-50 text-gray-50 cursor-pointer"
             onClick={() => mark(3)}
           >
             {board[3] && (
               <Svg
                 path={board[3] === "X" ? x.path : o.path}
                 view={board[3] === "X" ? x.viewBox : o.viewBox}
-                classlist="w-20 h-20 cursor-pointer fill-current "
+                classlist="w-20 h-20  fill-current "
               />
             )}
           </div>
           <div
-            className="flex items-center justify-center  border-2 border-blue-50 text-gray-50"
+            className="flex items-center justify-center  border-2 border-blue-50 text-gray-50 cursor-pointer"
             onClick={() => mark(4)}
           >
             {board[4] && (
               <Svg
                 path={board[4] === "X" ? x.path : o.path}
                 view={board[4] === "X" ? x.viewBox : o.viewBox}
-                classlist="w-20 h-20 cursor-pointer fill-current "
+                classlist="w-20 h-20  fill-current "
               />
             )}
           </div>
           <div
-            className="flex items-center justify-center   border-t-2 border-b-2  border-blue-50 text-gray-50"
+            className="flex items-center justify-center   border-t-2 border-b-2  border-blue-50 text-gray-50 cursor-pointer"
             onClick={() => mark(5)}
           >
             {board[5] && (
               <Svg
                 path={board[5] === "X" ? x.path : o.path}
                 view={board[5] === "X" ? x.viewBox : o.viewBox}
-                classlist="w-20 h-20 cursor-pointer fill-current "
+                classlist="w-20 h-20  fill-current "
               />
             )}
           </div>
           <div
-            className="flex items-center justify-center text-gray-50"
+            className="flex items-center justify-center text-gray-50 cursor-pointer"
             onClick={() => mark(6)}
           >
             {board[6] && (
               <Svg
                 path={board[6] === "X" ? x.path : o.path}
                 view={board[6] === "X" ? x.viewBox : o.viewBox}
-                classlist="w-20 h-20 cursor-pointer fill-current "
+                classlist="w-20 h-20  fill-current "
               />
             )}
           </div>
           <div
-            className="flex items-center justify-center   border-l-2 border-r-2  border-blue-50 text-gray-50"
+            className="flex items-center justify-center   border-l-2 border-r-2  border-blue-50 text-gray-50 cursor-pointer"
             onClick={() => mark(7)}
           >
             {board[7] && (
               <Svg
                 path={board[7] === "X" ? x.path : o.path}
                 view={board[7] === "X" ? x.viewBox : o.viewBox}
-                classlist="w-20 h-20 cursor-pointer fill-current "
+                classlist="w-20 h-20  fill-current "
               />
             )}
           </div>
           <div
-            className=" flex items-center justify-center text-gray-50"
+            className=" flex items-center justify-center text-gray-50 cursor-pointer"
             onClick={() => mark(8)}
           >
             {board[8] && (
               <Svg
                 path={board[8] === "X" ? x.path : o.path}
                 view={board[8] === "X" ? x.viewBox : o.viewBox}
-                classlist="w-20 h-20 cursor-pointer fill-current "
+                classlist="w-20 h-20  fill-current "
               />
             )}
           </div>
