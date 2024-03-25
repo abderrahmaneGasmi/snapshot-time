@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 export default function TicTacpage() {
   const [board, setBoard] = useState(["", "", "", "", "", "", "", "", ""]);
   const [turn, setTurn] = useState("X");
+  const [type, setType] = useState("bot" as "2p" | "bot");
   const [gameended, setGameended] = useState({
     winner: "" as "X" | "O" | "",
     isDraw: false,
@@ -37,8 +38,18 @@ export default function TicTacpage() {
     if (board[index] === "" && !gameended.winner) {
       const newBoard = [...board];
       newBoard[index] = turn;
+
+      if (type === "bot") {
+        const empty = newBoard.reduce((acc, curr, index) => {
+          if (curr === "") acc.push(index);
+          return acc;
+        }, [] as number[]);
+        const random = Math.floor(Math.random() * empty.length);
+        newBoard[empty[random]] = turn === "X" ? "O" : "X";
+      }
+
       setBoard(newBoard);
-      setTurn(turn === "X" ? "O" : "X");
+      if (type === "2p") setTurn(turn === "X" ? "O" : "X");
     }
   };
   const checkWinner = () => {
@@ -83,6 +94,10 @@ export default function TicTacpage() {
       isDraw: false,
       score: gameended.score,
     });
+  };
+  const chageType = () => {
+    setType(type === "2p" ? "bot" : "2p");
+    reloadgame();
   };
   return (
     <main className="h-screen flex flex-col items-center justify-evenly relative">
