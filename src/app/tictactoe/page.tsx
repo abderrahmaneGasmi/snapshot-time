@@ -28,16 +28,17 @@ export default function TicTacpage() {
 
   const mark = (index: number) => {
     if (board[index] === "" && !gameended.winner) {
-      const newBoard = [...board];
+      let newBoard = [...board];
       newBoard[index] = turn;
 
       if (type === "bot") {
-        const empty = newBoard.reduce((acc, curr, index) => {
-          if (curr === "") acc.push(index);
-          return acc;
-        }, [] as number[]);
-        const random = Math.floor(Math.random() * empty.length);
-        newBoard[empty[random]] = turn === "X" ? "O" : "X";
+        newBoard = smartBot(newBoard);
+        // const empty = newBoard.reduce((acc, curr, index) => {
+        //   if (curr === "") acc.push(index);
+        //   return acc;
+        // }, [] as number[]);
+        // const random = Math.floor(Math.random() * empty.length);
+        // newBoard[empty[random]] = turn === "X" ? "O" : "X";
       }
 
       setBoard(newBoard);
@@ -96,6 +97,62 @@ export default function TicTacpage() {
   const chageType = () => {
     setType(type === "2p" ? "bot" : "2p");
     reloadgame(true);
+  };
+  const smartBot = (board: string[]) => {
+    const winningCombination = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+    let found = false;
+    const botidxs = board.reduce((acc, curr, index) => {
+      if (curr === "O") acc.push(index);
+      return acc;
+    }, [] as number[]);
+    const playeridxs = board.reduce((acc, curr, index) => {
+      if (curr === "X") acc.push(index);
+      return acc;
+    }, [] as number[]);
+    for (let i = 0; i < winningCombination.length; i++) {
+      const line = winningCombination[i];
+      // remove the bot indexes from the winning combination
+      const filtered = line.filter((idx) => !botidxs.includes(idx));
+
+      // if the filtered array length is 1 and the index is empty then mark it
+      if (filtered.length === 1 && board[filtered[0]] === "") {
+        board[filtered[0]] = "O";
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      for (let i = 0; i < winningCombination.length; i++) {
+        const line = winningCombination[i];
+        // remove the player indexes from the winning combination
+        const filtered = line.filter((idx) => !playeridxs.includes(idx));
+
+        // if the filtered array length is 1 and the index is empty then mark it
+        if (filtered.length === 1 && board[filtered[0]] === "") {
+          board[filtered[0]] = "O";
+          found = true;
+          break;
+        }
+      }
+    }
+    if (!found) {
+      const empty = board.reduce((acc, curr, index) => {
+        if (curr === "") acc.push(index);
+        return acc;
+      }, [] as number[]);
+      const random = Math.floor(Math.random() * empty.length);
+      board[empty[random]] = "O";
+    }
+    return board;
   };
   return (
     <main className="h-screen flex flex-col items-center justify-evenly relative">
