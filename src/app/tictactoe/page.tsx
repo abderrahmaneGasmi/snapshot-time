@@ -11,6 +11,10 @@ export default function TicTacpage() {
   const [type, setType] = useState("bot" as "2p" | "bot");
   const [gameended, setGameended] = useState({
     winner: "" as "X" | "O" | "",
+    line: {
+      idxs: [] as number[],
+      direction: "" as "row" | "col" | "diag" | "antiDiag" | "",
+    },
     isDraw: false,
     score: {
       X: 0,
@@ -61,6 +65,19 @@ export default function TicTacpage() {
       if (board[a] && board[a] === board[b] && board[a] === board[c]) {
         setGameended({
           winner: board[a] as "X" | "O",
+          line: {
+            idxs: [a, b, c],
+            direction:
+              a === 0 && c === 8
+                ? "diag"
+                : a === 2 && c === 6
+                ? "antiDiag"
+                : Math.floor(a / 3) === Math.floor(c / 3)
+                ? "row"
+                : a % 3 === c % 3
+                ? "col"
+                : "",
+          },
           isDraw: false,
           score: {
             ...gameended.score,
@@ -85,6 +102,10 @@ export default function TicTacpage() {
     setGameended({
       winner: "",
       isDraw: false,
+      line: {
+        idxs: [],
+        direction: "",
+      },
       score: reloadscore
         ? {
             X: 0,
@@ -179,7 +200,7 @@ export default function TicTacpage() {
           }}
         >
           <div
-            className="flex items-center justify-center text-gray-50 cursor-pointer"
+            className="flex items-center justify-center text-gray-50 cursor-pointer relative"
             onClick={() => mark(0)}
           >
             {board[0] && (
@@ -189,9 +210,24 @@ export default function TicTacpage() {
                 classlist="w-20 h-20  fill-current "
               />
             )}
+            {gameended.line.idxs.includes(0) && (
+              <div
+                className={`absolute  bg-yellow-500 
+                ${gameended.line.direction === "row" && "-inset-x-1 h-4"}
+                ${gameended.line.direction === "col" && "-inset-y-1 w-4"}
+                
+                ${gameended.line.direction === "diag" && "-inset-x-9 h-4"}
+                `}
+                style={{
+                  transform: `${
+                    gameended.line.direction === "diag" ? "rotate(45deg)" : ""
+                  }`,
+                }}
+              ></div>
+            )}
           </div>
           <div
-            className="flex items-center justify-center  border-l-2 border-r-2  border-blue-50 text-gray-50 cursor-pointer"
+            className="relative flex items-center justify-center  border-l-2 border-r-2  border-blue-50 text-gray-50 cursor-pointer"
             onClick={() => mark(1)}
           >
             {board[1] && (
@@ -201,9 +237,19 @@ export default function TicTacpage() {
                 classlist="w-20 h-20  fill-current "
               />
             )}
+            {gameended.line.idxs.includes(1) && (
+              <div
+                className={`absolute  bg-yellow-500 
+                ${gameended.line.direction === "row" && "-inset-x-1 h-4"}
+                ${gameended.line.direction === "col" && "-inset-y-1 w-4"}
+                
+                `}
+                style={{}}
+              ></div>
+            )}
           </div>
           <div
-            className="flex items-center justify-center text-gray-50 cursor-pointer"
+            className="relative flex items-center justify-center text-gray-50 cursor-pointer"
             onClick={() => mark(2)}
           >
             {board[2] && (
@@ -213,9 +259,26 @@ export default function TicTacpage() {
                 classlist="w-20 h-20  fill-current "
               />
             )}
+            {gameended.line.idxs.includes(2) && (
+              <div
+                className={`absolute  bg-yellow-500 
+                ${gameended.line.direction === "row" && "-inset-x-1 h-4"}
+                ${gameended.line.direction === "col" && "-inset-y-1 w-4"}
+                
+                  ${gameended.line.direction === "antiDiag" && "-inset-y-9 w-4"}
+                `}
+                style={{
+                  transform: `${
+                    gameended.line.direction === "antiDiag"
+                      ? "rotate(45deg)"
+                      : ""
+                  }`,
+                }}
+              ></div>
+            )}{" "}
           </div>
           <div
-            className="flex items-center justify-center  border-t-2 border-b-2 border-blue-50 text-gray-50 cursor-pointer"
+            className="relative flex items-center justify-center  border-t-2 border-b-2 border-blue-50 text-gray-50 cursor-pointer"
             onClick={() => mark(3)}
           >
             {board[3] && (
@@ -225,9 +288,19 @@ export default function TicTacpage() {
                 classlist="w-20 h-20  fill-current "
               />
             )}
+            {gameended.line.idxs.includes(3) && (
+              <div
+                className={`absolute  bg-yellow-500 
+                ${gameended.line.direction === "row" && "-inset-x-1 h-4"}
+                ${gameended.line.direction === "col" && "-inset-y-1 w-4"}
+                
+                `}
+                style={{}}
+              ></div>
+            )}{" "}
           </div>
           <div
-            className="flex items-center justify-center  border-2 border-blue-50 text-gray-50 cursor-pointer"
+            className="relative flex items-center justify-center  border-2 border-blue-50 text-gray-50 cursor-pointer"
             onClick={() => mark(4)}
           >
             {board[4] && (
@@ -237,9 +310,29 @@ export default function TicTacpage() {
                 classlist="w-20 h-20  fill-current "
               />
             )}
+            {gameended.line.idxs.includes(4) && (
+              <div
+                className={`absolute  bg-yellow-500 
+                ${gameended.line.direction === "row" && "-inset-x-1 h-4"}
+                ${gameended.line.direction === "col" && "-inset-y-1 w-4"}
+                
+                ${gameended.line.direction === "diag" && "-inset-x-9 h-4"}
+                 ${gameended.line.direction === "antiDiag" && "-inset-y-9 w-4"}
+                `}
+                style={{
+                  transform: `${
+                    gameended.line.direction === "diag"
+                      ? "rotate(45deg)"
+                      : gameended.line.direction === "antiDiag"
+                      ? "rotate(45deg)"
+                      : ""
+                  }`,
+                }}
+              ></div>
+            )}{" "}
           </div>
           <div
-            className="flex items-center justify-center   border-t-2 border-b-2  border-blue-50 text-gray-50 cursor-pointer"
+            className="relative flex items-center justify-center   border-t-2 border-b-2  border-blue-50 text-gray-50 cursor-pointer"
             onClick={() => mark(5)}
           >
             {board[5] && (
@@ -249,9 +342,19 @@ export default function TicTacpage() {
                 classlist="w-20 h-20  fill-current "
               />
             )}
+            {gameended.line.idxs.includes(5) && (
+              <div
+                className={`absolute  bg-yellow-500 
+                ${gameended.line.direction === "row" && "-inset-x-1 h-4"}
+                ${gameended.line.direction === "col" && "-inset-y-1 w-4"}
+                
+                `}
+                style={{}}
+              ></div>
+            )}{" "}
           </div>
           <div
-            className="flex items-center justify-center text-gray-50 cursor-pointer"
+            className="relative flex items-center justify-center text-gray-50 cursor-pointer"
             onClick={() => mark(6)}
           >
             {board[6] && (
@@ -261,9 +364,28 @@ export default function TicTacpage() {
                 classlist="w-20 h-20  fill-current "
               />
             )}
+            {gameended.line.idxs.includes(6) && (
+              <div
+                className={`absolute  bg-yellow-500 
+                ${gameended.line.direction === "row" && "-inset-x-1 h-4"}
+                ${gameended.line.direction === "col" && "-inset-y-1 w-4"}
+                
+                   ${
+                     gameended.line.direction === "antiDiag" && "-inset-y-9 w-4"
+                   }
+                `}
+                style={{
+                  transform: `${
+                    gameended.line.direction === "antiDiag"
+                      ? "rotate(45deg)"
+                      : ""
+                  }`,
+                }}
+              ></div>
+            )}{" "}
           </div>
           <div
-            className="flex items-center justify-center   border-l-2 border-r-2  border-blue-50 text-gray-50 cursor-pointer"
+            className="relative flex items-center justify-center   border-l-2 border-r-2  border-blue-50 text-gray-50 cursor-pointer"
             onClick={() => mark(7)}
           >
             {board[7] && (
@@ -273,9 +395,19 @@ export default function TicTacpage() {
                 classlist="w-20 h-20  fill-current "
               />
             )}
+            {gameended.line.idxs.includes(7) && (
+              <div
+                className={`absolute  bg-yellow-500 
+                ${gameended.line.direction === "row" && "-inset-x-1 h-4"}
+                ${gameended.line.direction === "col" && "-inset-y-1 w-4"}
+                
+                `}
+                style={{}}
+              ></div>
+            )}{" "}
           </div>
           <div
-            className=" flex items-center justify-center text-gray-50 cursor-pointer"
+            className="relative flex items-center justify-center text-gray-50 cursor-pointer"
             onClick={() => mark(8)}
           >
             {board[8] && (
@@ -285,6 +417,20 @@ export default function TicTacpage() {
                 classlist="w-20 h-20  fill-current "
               />
             )}
+            {gameended.line.idxs.includes(8) && (
+              <div
+                className={`absolute  bg-yellow-500 
+                ${gameended.line.direction === "row" && "-inset-x-1 h-4"}
+                ${gameended.line.direction === "col" && "-inset-y-1 w-4"}
+               ${gameended.line.direction === "diag" && "-inset-x-9 h-4"}
+                `}
+                style={{
+                  transform: `${
+                    gameended.line.direction === "diag" ? "rotate(45deg)" : ""
+                  }`,
+                }}
+              ></div>
+            )}{" "}
           </div>
         </div>
       </div>
