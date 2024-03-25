@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { chevronBack, o, x } from "../helpers/svgs";
+import { chevronBack, o, player1, player2, x } from "../helpers/svgs";
 import Link from "next/link";
 import Svg from "../assets/Svg";
 import ConfettiScreen from "../assets/ConfettiScreen";
@@ -21,14 +21,6 @@ export default function TicTacpage() {
 
   useEffect(() => {
     if (gameended.winner || gameended.isDraw) {
-      // setTimeout(() => {
-      //     setBoard(["", "", "", "", "", "", "", "", ""]);
-      //     setGameended({
-      //     ...gameended,
-      //     winner: "",
-      //     isDraw: false,
-      //     });
-      // }, 3000);
       return;
     }
     checkWinner();
@@ -87,17 +79,23 @@ export default function TicTacpage() {
       });
     }
   };
-  const reloadgame = () => {
+  const reloadgame = (reloadscore = false) => {
     setBoard(["", "", "", "", "", "", "", "", ""]);
     setGameended({
       winner: "",
       isDraw: false,
-      score: gameended.score,
+      score: reloadscore
+        ? {
+            X: 0,
+            O: 0,
+            draw: 0,
+          }
+        : gameended.score,
     });
   };
   const chageType = () => {
     setType(type === "2p" ? "bot" : "2p");
-    reloadgame();
+    reloadgame(true);
   };
   return (
     <main className="h-screen flex flex-col items-center justify-evenly relative">
@@ -233,23 +231,44 @@ export default function TicTacpage() {
           </div>
         </div>
       </div>
-      <div className="flex gap-8 items-center">
-        <div className="flex flex-col items-center justify-center gap-4">
-          <div className="text-4xl text-pink-50 font-bold">Player X</div>
+      <div className="grid grid-cols-4 items-center">
+        <div className="flex flex-col items-center justify-center gap-4 w-60">
+          <div className="text-4xl text-pink-50 font-bold">
+            {type === "2p" ? "Player 1" : "Player"}
+            (X)
+          </div>
           <div className="text-3xl text-pink-50 font-bold text-center">
             {gameended.score.X}
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center gap-4">
+        <div className="flex flex-col items-center justify-center gap-4 w-60">
           <div className="text-4xl text-pink-50 font-bold">Draw</div>
           <div className="text-3xl text-pink-50 font-bold text-center">
             {gameended.score.draw}
           </div>
         </div>
-        <div className="flex flex-col items-center justify-center gap-4">
-          <div className="text-4xl text-pink-50 font-bold">Player O</div>
+        <div className="flex flex-col items-center justify-center gap-4 w-60">
+          <div className="text-4xl text-pink-50 font-bold">
+            {type === "2p" ? "Player 2" : "Bot"}
+            (O)
+          </div>
           <div className="text-3xl text-pink-50 font-bold text-center">
             {gameended.score.O}
+          </div>
+        </div>
+        <div className="flex justify-center items-center w-60 ">
+          <div
+            className="flex flex-col items-center justify-center gap-4 px-10 py-2 rounded-lg hover:bg-indigo-500 cursor-pointer"
+            onClick={chageType}
+          >
+            <Svg
+              path={type === "2p" ? player2.path : player1.path}
+              view={type === "2p" ? player2.viewBox : player1.viewBox}
+              classlist="w-12 h-12 fill-current text-pink-50"
+            />
+            <div className="text-xl text-pink-50 font-bold text-center">
+              {type === "2p" ? "VS Player" : "VS Bot"}
+            </div>
           </div>
         </div>
       </div>
