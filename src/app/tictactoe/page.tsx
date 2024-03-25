@@ -14,6 +14,7 @@ export default function TicTacpage() {
     score: {
       X: 0,
       O: 0,
+      draw: 0,
     },
   });
 
@@ -68,6 +69,10 @@ export default function TicTacpage() {
       setGameended({
         ...gameended,
         isDraw: true,
+        score: {
+          ...gameended.score,
+          draw: gameended.score.draw + 1,
+        },
       });
     }
   };
@@ -80,7 +85,7 @@ export default function TicTacpage() {
     });
   };
   return (
-    <main className="h-screen flex flex-col items-center justify-around relative">
+    <main className="h-screen flex flex-col items-center justify-evenly relative">
       <Link
         className="absolute top-4 left-4 flex  items-center justify-center text-pink-50 font-bold text-4xl cursor-pointer gap-2 bg-indigo-900 rounded p-2 z-50
       
@@ -96,7 +101,13 @@ export default function TicTacpage() {
       </Link>
       <div className="flex flex-col gap-8 items-center">
         <div className="text-pink-50 text-7xl ">Tic Tac Toe Game</div>
-        <div className="grid grid-cols-3 grid-rows-3 w-96 h-96">
+        <div
+          className="grid grid-cols-3 grid-rows-3 "
+          style={{
+            width: "30rem",
+            height: "30rem",
+          }}
+        >
           <div
             className="flex items-center justify-center text-gray-50 cursor-pointer"
             onClick={() => mark(0)}
@@ -204,6 +215,26 @@ export default function TicTacpage() {
                 classlist="w-20 h-20  fill-current "
               />
             )}
+          </div>
+        </div>
+      </div>
+      <div className="flex gap-8 items-center">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <div className="text-4xl text-pink-50 font-bold">Player X</div>
+          <div className="text-3xl text-pink-50 font-bold text-center">
+            {gameended.score.X}
+          </div>
+        </div>
+        <div className="flex flex-col items-center justify-center gap-4">
+          <div className="text-4xl text-pink-50 font-bold">Draw</div>
+          <div className="text-3xl text-pink-50 font-bold text-center">
+            {gameended.score.draw}
+          </div>
+        </div>
+        <div className="flex flex-col items-center justify-center gap-4">
+          <div className="text-4xl text-pink-50 font-bold">Player O</div>
+          <div className="text-3xl text-pink-50 font-bold text-center">
+            {gameended.score.O}
           </div>
         </div>
       </div>
