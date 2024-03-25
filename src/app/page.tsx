@@ -41,6 +41,7 @@ export default function Home() {
           <Icon
             path={tictactoe.path}
             view={tictactoe.viewBox}
+            url="/tictactoe"
             pathtags={{
               fill: "white",
               stroke: "white",
