@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import { chevronBack, o, x } from "../helpers/svgs";
 import Link from "next/link";
 import Svg from "../assets/Svg";
-
+import ConfettiScreen from "../assets/ConfettiScreen";
+import { motion } from "framer-motion";
 export default function TicTacpage() {
   const [board, setBoard] = useState(["", "", "", "", "", "", "", "", ""]);
   const [turn, setTurn] = useState("X");
@@ -69,6 +70,14 @@ export default function TicTacpage() {
         isDraw: true,
       });
     }
+  };
+  const reloadgame = () => {
+    setBoard(["", "", "", "", "", "", "", "", ""]);
+    setGameended({
+      winner: "",
+      isDraw: false,
+      score: gameended.score,
+    });
   };
   return (
     <main className="h-screen flex flex-col items-center justify-around relative">
@@ -198,6 +207,75 @@ export default function TicTacpage() {
           </div>
         </div>
       </div>
+      {gameended.winner && (
+        <>
+          <ConfettiScreen type="empty" />
+          <motion.div
+            className="
+        absolute z-50  backdrop-filter backdrop-blur-xl glowstar pd-8 rounded-xl min-w-80 flex flex-col items-center justify-center 
+        "
+            initial={{
+              opacity: 0,
+              scale: 0,
+              x: "0%",
+              y: "0%",
+              //   transformOrigin: "20% 20%",
+            }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1 }}
+            style={{
+              minHeight: "40rem",
+              padding: "0 2rem",
+            }}
+          >
+            <div className="text-9xl text-pink-50 font-bold mx-auto text-center mb-4">
+              {gameended.winner} Won the game
+            </div>
+            <div
+              className="bg-pink-50 text-white px-4 py-2 rounded-md mt-4 cursor-pointer text-5xl font-bold bg-yellow-500"
+              onClick={() => {
+                reloadgame();
+              }}
+            >
+              Play Again
+            </div>
+          </motion.div>
+        </>
+      )}
+      {gameended.isDraw && (
+        <>
+          <motion.div
+            className="
+            absolute z-50  backdrop-filter backdrop-blur-xl glowstar pd-8 rounded-xl min-w-80 flex flex-col items-center justify-center 
+            "
+            initial={{
+              opacity: 0,
+              scale: 0,
+              x: "0%",
+              y: "0%",
+              //   transformOrigin: "20% 20%",
+            }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1 }}
+            style={{
+              minHeight: "40rem",
+              padding: "0 2rem",
+            }}
+          >
+            <div className="text-9xl text-pink-50 font-bold mx-auto text-center mb-4">
+              Its a Draw
+            </div>
+            <div
+              className="bg-pink-50 text-white px-4 py-2 rounded-md mt-4 cursor-pointer text-5xl font-bold bg-yellow-500"
+              onClick={() => {
+                reloadgame();
+              }}
+            >
+              Play Again
+            </div>
+          </motion.div>
+        </>
+      )}
     </main>
   );
 }

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 export default function ConfettiScreen({
   type = "cards",
 }: {
-  type?: "wordfinder" | "cards" | "wordle";
+  type?: "wordfinder" | "cards" | "wordle" | "empty";
 }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
@@ -77,7 +77,7 @@ export default function ConfettiScreen({
             Play Again
           </div>
         </motion.div>
-      ) : (
+      ) : type == "wordle" ? (
         <motion.div
           className="
         absolute z-50  backdrop-filter backdrop-blur-xl glowstar pd-8 rounded-xl min-w-80 flex flex-col items-center justify-center 
@@ -111,7 +111,7 @@ export default function ConfettiScreen({
             Play Again
           </div>
         </motion.div>
-      )}
+      ) : null}
       <Confetti
         width={document.body.clientWidth}
         height={document.body.clientHeight}
