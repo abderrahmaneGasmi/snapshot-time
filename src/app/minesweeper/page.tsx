@@ -5,22 +5,27 @@ import {
   chevrondown,
   chevronup,
   flag,
-  o,
-  player1,
-  player2,
   timer,
-  x,
 } from "../helpers/svgs";
 import Link from "next/link";
 import Svg from "../assets/Svg";
 import ConfettiScreen from "../assets/ConfettiScreen";
 import { motion } from "framer-motion";
+
+interface box {
+  value: number | string;
+  isBomb: boolean;
+  isFlag: boolean;
+  isOpen: boolean;
+}
+
 export default function MinesWeeperpage() {
   const [showdropdown, setShowdropdown] = useState(false);
   const [time, setTimer] = useState({
     minutes: 0,
     seconds: 0,
   });
+  const [boxes, setBoxes] = useState<box[]>([]);
   useEffect(() => {
     const timer = setInterval(() => {
       setTimer((prev) => {
@@ -36,10 +41,44 @@ export default function MinesWeeperpage() {
         };
       });
     }, 1000);
+
+    let tempboxes: box[] = [];
+    for (let i = 0; i < 80; i++) {
+      tempboxes.push({
+        value: 0,
+        isBomb: false,
+        isFlag: false,
+        isOpen: false,
+      });
+    }
+    const bombs = 10;
+    let bombsPlaced = 0;
+    while (bombsPlaced < bombs) {
+      const randomIndex = Math.floor(Math.random() * 100);
+      if (!tempboxes[randomIndex].isBomb) {
+        tempboxes[randomIndex].isBomb = true;
+        bombsPlaced++;
+      }
+    }
+    setBoxes(tempboxes);
+
     return () => {
       clearInterval(timer);
     };
   }, []);
+  const clickbox = (index: number) => {
+    if (boxes[index].isOpen) return;
+    setBoxes((prev) => {
+      const temp = [...prev];
+      temp[index].isOpen = true;
+      return temp;
+    });
+    if (boxes[index].isBomb) {
+      console.log("game over");
+    } else {
+      console.log("safe");
+    }
+  };
   return (
     <main className="h-screen flex flex-col items-center justify-evenly relative">
       <Link
@@ -97,12 +136,19 @@ export default function MinesWeeperpage() {
           </div>
         </div>
         <div className="grid grid-cols-10 gap-2">
-          {Array.from({ length: 100 }).map((_, i) => (
+          {boxes.map((v, i) => (
             <div
               key={i}
-              className="w-10 h-10 bg-indigo-900 rounded flex items-center justify-center"
+              className="p-2 bg-indigo-900 rounded flex items-center justify-center cursor-pointer"
+              onClick={() => clickbox(i)}
             >
-              <div className="w-6 h-6 bg-indigo-800 rounded"></div>
+              <div
+                className={`w-12 h-12 ${
+                  v.isOpen ? "" : "bg-indigo-800 "
+                }rounded text-pink-50 text-4xl flex justify-center items-center`}
+              >
+                {v.isOpen ? (v.isBomb ? "💣" : v.value) : ""}
+              </div>
             </div>
           ))}
         </div>
