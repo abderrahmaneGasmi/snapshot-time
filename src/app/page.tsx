@@ -55,7 +55,7 @@ export default function Home() {
           onMouseEnter={() => setGame("Minesweeper Game")}
           onMouseLeave={() => setGame("")}
         >
-          <Icon path={mine.path} view={mine.viewBox} />
+          <Icon path={mine.path} view={mine.viewBox} url="/minesweeper" />
         </div>
         <div
           onMouseEnter={() => setGame("Snake Game")}
