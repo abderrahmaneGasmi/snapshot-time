@@ -132,8 +132,9 @@ export default function MinesWeeperpage() {
 
     let tempboxes = [...boxes];
     tempboxes[index].isOpen = true;
-    if (boxes[index].value === 0) {
+    if (boxes[index].value === 0 && !boxes[index].isBomb) {
       tempboxes = openAdjacentBoxes(tempboxes, index);
+      setFlags(getflagnumber());
     }
 
     setBoxes((prev) => {
@@ -154,6 +155,8 @@ export default function MinesWeeperpage() {
         tempboxes[index - 1].isBomb === false
       ) {
         tempboxes[index - 1].isOpen = true;
+        tempboxes[index - 1].isFlag = "none";
+
         if (tempboxes[index - 1].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index - 1);
         }
@@ -165,6 +168,7 @@ export default function MinesWeeperpage() {
         tempboxes[index + 1].isBomb === false
       ) {
         tempboxes[index + 1].isOpen = true;
+        tempboxes[index + 1].isFlag = "none";
         if (tempboxes[index + 1].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index + 1);
         }
@@ -176,6 +180,7 @@ export default function MinesWeeperpage() {
         tempboxes[index - 10].isBomb === false
       ) {
         tempboxes[index - 10].isOpen = true;
+        tempboxes[index - 10].isFlag = "none";
         if (tempboxes[index - 10].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index - 10);
         }
@@ -187,6 +192,7 @@ export default function MinesWeeperpage() {
         tempboxes[index + 10].isBomb === false
       ) {
         tempboxes[index + 10].isOpen = true;
+        tempboxes[index + 10].isFlag = "none";
         if (tempboxes[index + 10].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index + 10);
         }
@@ -198,6 +204,7 @@ export default function MinesWeeperpage() {
         tempboxes[index - 11].isBomb === false
       ) {
         tempboxes[index - 11].isOpen = true;
+        tempboxes[index - 11].isFlag = "none";
         if (tempboxes[index - 11].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index - 11);
         }
@@ -209,6 +216,7 @@ export default function MinesWeeperpage() {
         tempboxes[index - 9].isBomb === false
       ) {
         tempboxes[index - 9].isOpen = true;
+        tempboxes[index - 9].isFlag = "none";
         if (tempboxes[index - 9].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index - 9);
         }
@@ -220,6 +228,7 @@ export default function MinesWeeperpage() {
         tempboxes[index + 9].isBomb === false
       ) {
         tempboxes[index + 9].isOpen = true;
+        tempboxes[index + 9].isFlag = "none";
         if (tempboxes[index + 9].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index + 9);
         }
@@ -231,12 +240,20 @@ export default function MinesWeeperpage() {
         tempboxes[index + 11].isBomb === false
       ) {
         tempboxes[index + 11].isOpen = true;
+        tempboxes[index + 11].isFlag = "none";
         if (tempboxes[index + 11].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index + 11);
         }
       }
     }
     return tempboxes;
+  };
+  const getflagnumber = () => {
+    let count = 10;
+    for (let i = 0; i < 80; i++) {
+      if (boxes[i].isFlag === "flag" || boxes[i].isFlag === "question") count--;
+    }
+    return count;
   };
   return (
     <main
