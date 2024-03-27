@@ -403,7 +403,7 @@ export default function MinesWeeperpage() {
     const diffrence = gamevals.besttime - (time.minutes * 60 + time.seconds);
     const difftime = {
       minutes: Math.abs(Math.floor(Math.abs(diffrence / 60))),
-      seconds: Math.abs(diffrence - Math.floor(Math.abs(diffrence) / 60) * 60),
+      seconds: Math.abs(diffrence % 60),
     };
 
     return {
