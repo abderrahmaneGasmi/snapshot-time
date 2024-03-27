@@ -70,6 +70,16 @@ export default function MinesWeeperpage() {
             <div className="text-pink-50 text-3xl">50</div>
           </div>
         </div>
+        <div className="grid grid-cols-10 gap-2">
+          {Array.from({ length: 100 }).map((_, i) => (
+            <div
+              key={i}
+              className="w-10 h-10 bg-indigo-900 rounded flex items-center justify-center"
+            >
+              <div className="w-6 h-6 bg-indigo-800 rounded"></div>
+            </div>
+          ))}
+        </div>
       </div>
     </main>
   );
