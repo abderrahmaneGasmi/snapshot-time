@@ -5,6 +5,8 @@ export default function ConfettiScreen({
   type = "cards",
 }: {
   type?: "wordfinder" | "cards" | "wordle" | "empty";
+  time?: number;
+  besttime?: number;
 }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center">
