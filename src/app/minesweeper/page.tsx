@@ -25,6 +25,13 @@ export default function MinesWeeperpage() {
     minutes: 0,
     seconds: 0,
   });
+  const [gamevals, setGamevals] = useState({
+    difficulty: "easy",
+    bombs: 10,
+    rows: 8,
+    columns: 10,
+    ended: false,
+  });
   const [flags, setFlags] = useState(10);
   const [boxes, setBoxes] = useState<box[]>([]);
   useEffect(() => {
@@ -43,8 +50,12 @@ export default function MinesWeeperpage() {
       });
     }, 1000);
 
+    if (gamevals.ended) {
+      clearInterval(timer);
+      return;
+    }
     let tempboxes: box[] = [];
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < gamevals.rows * gamevals.columns; i++) {
       tempboxes.push({
         value: 0,
         isBomb: false,
@@ -52,17 +63,18 @@ export default function MinesWeeperpage() {
         isOpen: false,
       });
     }
-    const bombs = 10;
     let bombsPlaced = 0;
-    while (bombsPlaced < bombs) {
-      const randomIndex = Math.floor(Math.random() * 80);
+    while (bombsPlaced < gamevals.bombs) {
+      const randomIndex = Math.floor(
+        Math.random() * gamevals.rows * gamevals.columns
+      );
       if (!tempboxes[randomIndex].isBomb) {
         tempboxes[randomIndex].isBomb = true;
         bombsPlaced++;
       }
     }
 
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < gamevals.rows * gamevals.columns; i++) {
       if (tempboxes[i].isBomb) {
         if (i % 10 !== 0) {
           if (typeof tempboxes[i - 1].value === "number")
@@ -104,13 +116,13 @@ export default function MinesWeeperpage() {
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [gamevals]);
   function handleRightClick(
     event: React.MouseEvent<HTMLDivElement>,
     index: number
   ) {
     event.preventDefault();
-
+    if (gamevals.ended) return;
     if (flags === 0 && boxes[index].isFlag === "none") return;
 
     let tempboxes = [...boxes];
@@ -128,10 +140,20 @@ export default function MinesWeeperpage() {
   }
 
   const clickbox = (index: number) => {
+    if (gamevals.ended) return;
     if (boxes[index].isOpen) return;
 
     let tempboxes = [...boxes];
     tempboxes[index].isOpen = true;
+    if (boxes[index].isBomb) {
+      tempboxes = openbombs(tempboxes);
+      setBoxes(tempboxes);
+      setGamevals((prev) => ({ ...prev, ended: true }));
+      document.getElementById("box" + index)?.classList.add("bg-red-500");
+      return;
+    } else {
+      console.log("safe");
+    }
     if (boxes[index].value === 0 && !boxes[index].isBomb) {
       tempboxes = openAdjacentBoxes(tempboxes, index);
       setFlags(getflagnumber());
@@ -142,11 +164,6 @@ export default function MinesWeeperpage() {
       temp[index].isOpen = true;
       return temp;
     });
-    if (boxes[index].isBomb) {
-      console.log("game over");
-    } else {
-      console.log("safe");
-    }
   };
   const openAdjacentBoxes = (tempboxes: box[], index: number) => {
     if (index % 10 !== 0) {
@@ -250,10 +267,18 @@ export default function MinesWeeperpage() {
   };
   const getflagnumber = () => {
     let count = 10;
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < gamevals.rows * gamevals.columns; i++) {
       if (boxes[i].isFlag === "flag" || boxes[i].isFlag === "question") count--;
     }
     return count;
+  };
+  const openbombs = (tempboxes: box[]) => {
+    for (let i = 0; i < gamevals.rows * gamevals.columns; i++) {
+      if (tempboxes[i].isBomb) {
+        tempboxes[i].isOpen = true;
+      }
+    }
+    return tempboxes;
   };
   return (
     <main
@@ -320,6 +345,7 @@ export default function MinesWeeperpage() {
           {boxes.map((v, i) => (
             <div
               key={i}
+              id={"box" + i}
               className="p-2 bg-indigo-900 rounded flex items-center justify-center cursor-pointer"
               onClick={() => clickbox(i)}
               onContextMenu={(e) => handleRightClick(e, i)}
