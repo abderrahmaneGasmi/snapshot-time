@@ -54,12 +54,50 @@ export default function MinesWeeperpage() {
     const bombs = 10;
     let bombsPlaced = 0;
     while (bombsPlaced < bombs) {
-      const randomIndex = Math.floor(Math.random() * 100);
+      const randomIndex = Math.floor(Math.random() * 80);
       if (!tempboxes[randomIndex].isBomb) {
         tempboxes[randomIndex].isBomb = true;
         bombsPlaced++;
       }
     }
+
+    for (let i = 0; i < 80; i++) {
+      if (tempboxes[i].isBomb) {
+        if (i % 10 !== 0) {
+          if (typeof tempboxes[i - 1].value === "number")
+            tempboxes[i - 1].value = +tempboxes[i - 1].value + 1;
+        }
+        if (i % 10 !== 9) {
+          if (typeof tempboxes[i + 1].value === "number")
+            tempboxes[i + 1].value = +tempboxes[i + 1].value + 1;
+        }
+        if (i > 9) {
+          if (typeof tempboxes[i - 10].value === "number")
+            tempboxes[i - 10].value = +tempboxes[i - 10].value + 1;
+        }
+        if (i < 70) {
+          if (typeof tempboxes[i + 10].value === "number")
+            tempboxes[i + 10].value = +tempboxes[i + 10].value + 1;
+        }
+        if (i % 10 !== 0 && i > 9) {
+          if (typeof tempboxes[i - 11].value === "number")
+            tempboxes[i - 11].value = +tempboxes[i - 11].value + 1;
+        }
+        if (i % 10 !== 9 && i > 9) {
+          if (typeof tempboxes[i - 9].value === "number")
+            tempboxes[i - 9].value = +tempboxes[i - 9].value + 1;
+        }
+        if (i % 10 !== 0 && i < 70) {
+          if (typeof tempboxes[i + 9].value === "number")
+            tempboxes[i + 9].value = +tempboxes[i + 9].value + 1;
+        }
+        if (i % 10 !== 9 && i < 70) {
+          if (typeof tempboxes[i + 11].value === "number")
+            tempboxes[i + 11].value = +tempboxes[i + 11].value + 1;
+        }
+      }
+    }
+
     setBoxes(tempboxes);
 
     return () => {
@@ -73,6 +111,13 @@ export default function MinesWeeperpage() {
 
   const clickbox = (index: number) => {
     if (boxes[index].isOpen) return;
+
+    let tempboxes = [...boxes];
+    tempboxes[index].isOpen = true;
+    if (boxes[index].value === 0) {
+      tempboxes = openAdjacentBoxes(tempboxes, index);
+    }
+
     setBoxes((prev) => {
       const temp = [...prev];
       temp[index].isOpen = true;
@@ -83,6 +128,73 @@ export default function MinesWeeperpage() {
     } else {
       console.log("safe");
     }
+  };
+  const openAdjacentBoxes = (tempboxes: box[], index: number) => {
+    if (index % 10 !== 0) {
+      if (!tempboxes[index - 1].isOpen) {
+        tempboxes[index - 1].isOpen = true;
+        if (tempboxes[index - 1].value === 0) {
+          tempboxes = openAdjacentBoxes(tempboxes, index - 1);
+        }
+      }
+    }
+    if (index % 10 !== 9) {
+      if (!tempboxes[index + 1].isOpen) {
+        tempboxes[index + 1].isOpen = true;
+        if (tempboxes[index + 1].value === 0) {
+          tempboxes = openAdjacentBoxes(tempboxes, index + 1);
+        }
+      }
+    }
+    if (index > 9) {
+      if (!tempboxes[index - 10].isOpen) {
+        tempboxes[index - 10].isOpen = true;
+        if (tempboxes[index - 10].value === 0) {
+          tempboxes = openAdjacentBoxes(tempboxes, index - 10);
+        }
+      }
+    }
+    if (index < 70) {
+      if (!tempboxes[index + 10].isOpen) {
+        tempboxes[index + 10].isOpen = true;
+        if (tempboxes[index + 10].value === 0) {
+          tempboxes = openAdjacentBoxes(tempboxes, index + 10);
+        }
+      }
+    }
+    if (index % 10 !== 0 && index > 9) {
+      if (!tempboxes[index - 11].isOpen) {
+        tempboxes[index - 11].isOpen = true;
+        if (tempboxes[index - 11].value === 0) {
+          tempboxes = openAdjacentBoxes(tempboxes, index - 11);
+        }
+      }
+    }
+    if (index % 10 !== 9 && index > 9) {
+      if (!tempboxes[index - 9].isOpen) {
+        tempboxes[index - 9].isOpen = true;
+        if (tempboxes[index - 9].value === 0) {
+          tempboxes = openAdjacentBoxes(tempboxes, index - 9);
+        }
+      }
+    }
+    if (index % 10 !== 0 && index < 70) {
+      if (!tempboxes[index + 9].isOpen) {
+        tempboxes[index + 9].isOpen = true;
+        if (tempboxes[index + 9].value === 0) {
+          tempboxes = openAdjacentBoxes(tempboxes, index + 9);
+        }
+      }
+    }
+    if (index % 10 !== 9 && index < 70) {
+      if (!tempboxes[index + 11].isOpen) {
+        tempboxes[index + 11].isOpen = true;
+        if (tempboxes[index + 11].value === 0) {
+          tempboxes = openAdjacentBoxes(tempboxes, index + 11);
+        }
+      }
+    }
+    return tempboxes;
   };
   return (
     <main className="h-screen flex flex-col items-center justify-evenly relative">
@@ -151,9 +263,27 @@ export default function MinesWeeperpage() {
               <div
                 className={`w-12 h-12 ${
                   v.isOpen ? "" : "bg-indigo-800 "
-                }rounded text-pink-50 text-4xl flex justify-center items-center`}
+                }rounded ${
+                  v.value === 1
+                    ? "text-blue-500"
+                    : v.value === 2
+                    ? "text-green-500"
+                    : v.value === 3
+                    ? "text-red-500"
+                    : v.value === 4
+                    ? "text-purple-500"
+                    : v.value === 5
+                    ? "text-yellow-500"
+                    : v.value === 6
+                    ? "text-pink-500"
+                    : v.value === 7
+                    ? "text-blue-500"
+                    : v.value === 8
+                    ? "text-green-500"
+                    : ""
+                } text-4xl flex justify-center items-center font-bold`}
               >
-                {v.isOpen ? (v.isBomb ? "💣" : v.value) : ""}
+                {v.isOpen ? (v.isBomb ? "💣" : v.value ? v.value : "") : ""}
               </div>
             </div>
           ))}
