@@ -28,11 +28,11 @@ export default function MinesWeeperpage() {
   const [gamevals, setGamevals] = useState({
     difficulty: "easy",
     bombs: 10,
-    rows: 8,
+    rows: 4,
     columns: 10,
     ended: false,
   });
-  const [flags, setFlags] = useState(10);
+  const [flags, setFlags] = useState(gamevals.bombs);
   const [boxes, setBoxes] = useState<box[]>([]);
   useEffect(() => {
     const timer = setInterval(() => {
@@ -76,37 +76,52 @@ export default function MinesWeeperpage() {
 
     for (let i = 0; i < gamevals.rows * gamevals.columns; i++) {
       if (tempboxes[i].isBomb) {
-        if (i % 10 !== 0) {
+        if (i % gamevals.columns !== 0) {
           if (typeof tempboxes[i - 1].value === "number")
             tempboxes[i - 1].value = +tempboxes[i - 1].value + 1;
         }
-        if (i % 10 !== 9) {
+        if (i % gamevals.columns !== gamevals.columns - 1) {
           if (typeof tempboxes[i + 1].value === "number")
             tempboxes[i + 1].value = +tempboxes[i + 1].value + 1;
         }
-        if (i > 9) {
-          if (typeof tempboxes[i - 10].value === "number")
-            tempboxes[i - 10].value = +tempboxes[i - 10].value + 1;
+        if (i > gamevals.columns - 1) {
+          if (typeof tempboxes[i - gamevals.columns].value === "number")
+            tempboxes[i - gamevals.columns].value =
+              +tempboxes[i - gamevals.columns].value + 1;
         }
-        if (i < 70) {
-          if (typeof tempboxes[i + 10].value === "number")
-            tempboxes[i + 10].value = +tempboxes[i + 10].value + 1;
+        if (i < gamevals.columns * (gamevals.rows - 1)) {
+          if (typeof tempboxes[i + gamevals.columns].value === "number")
+            tempboxes[i + gamevals.columns].value =
+              +tempboxes[i + gamevals.columns].value + 1;
         }
-        if (i % 10 !== 0 && i > 9) {
-          if (typeof tempboxes[i - 11].value === "number")
-            tempboxes[i - 11].value = +tempboxes[i - 11].value + 1;
+        if (i % gamevals.columns !== 0 && i > gamevals.columns - 1) {
+          if (typeof tempboxes[i - (gamevals.columns + 1)].value === "number")
+            tempboxes[i - (gamevals.columns + 1)].value =
+              +tempboxes[i - (gamevals.columns + 1)].value + 1;
         }
-        if (i % 10 !== 9 && i > 9) {
-          if (typeof tempboxes[i - 9].value === "number")
-            tempboxes[i - 9].value = +tempboxes[i - 9].value + 1;
+        if (
+          i % gamevals.columns !== gamevals.columns - 1 &&
+          i > gamevals.columns - 1
+        ) {
+          if (typeof tempboxes[i - (gamevals.columns - 1)].value === "number")
+            tempboxes[i - (gamevals.columns - 1)].value =
+              +tempboxes[i - (gamevals.columns - 1)].value + 1;
         }
-        if (i % 10 !== 0 && i < 70) {
-          if (typeof tempboxes[i + 9].value === "number")
-            tempboxes[i + 9].value = +tempboxes[i + 9].value + 1;
+        if (
+          i % gamevals.columns !== 0 &&
+          i < gamevals.columns * (gamevals.rows - 1)
+        ) {
+          if (typeof tempboxes[i + (gamevals.columns - 1)].value === "number")
+            tempboxes[i + (gamevals.columns - 1)].value =
+              +tempboxes[i + (gamevals.columns - 1)].value + 1;
         }
-        if (i % 10 !== 9 && i < 70) {
-          if (typeof tempboxes[i + 11].value === "number")
-            tempboxes[i + 11].value = +tempboxes[i + 11].value + 1;
+        if (
+          i % gamevals.columns !== gamevals.columns - 1 &&
+          i < gamevals.columns * (gamevals.rows - 1)
+        ) {
+          if (typeof tempboxes[i + (gamevals.columns + 1)].value === "number")
+            tempboxes[i + (gamevals.columns + 1)].value =
+              +tempboxes[i + (gamevals.columns + 1)].value + 1;
         }
       }
     }
@@ -166,7 +181,7 @@ export default function MinesWeeperpage() {
     });
   };
   const openAdjacentBoxes = (tempboxes: box[], index: number) => {
-    if (index % 10 !== 0) {
+    if (index % gamevals.columns !== 0) {
       if (
         !tempboxes[index - 1].isOpen &&
         tempboxes[index - 1].isBomb === false
@@ -179,7 +194,7 @@ export default function MinesWeeperpage() {
         }
       }
     }
-    if (index % 10 !== 9) {
+    if (index % gamevals.columns !== gamevals.columns - 1) {
       if (
         !tempboxes[index + 1].isOpen &&
         tempboxes[index + 1].isBomb === false
@@ -191,82 +206,103 @@ export default function MinesWeeperpage() {
         }
       }
     }
-    if (index > 9) {
+    if (index > gamevals.columns - 1) {
       if (
-        !tempboxes[index - 10].isOpen &&
-        tempboxes[index - 10].isBomb === false
+        !tempboxes[index - gamevals.columns].isOpen &&
+        tempboxes[index - gamevals.columns].isBomb === false
       ) {
-        tempboxes[index - 10].isOpen = true;
-        tempboxes[index - 10].isFlag = "none";
-        if (tempboxes[index - 10].value === 0) {
-          tempboxes = openAdjacentBoxes(tempboxes, index - 10);
+        tempboxes[index - gamevals.columns].isOpen = true;
+        tempboxes[index - gamevals.columns].isFlag = "none";
+        if (tempboxes[index - gamevals.columns].value === 0) {
+          tempboxes = openAdjacentBoxes(tempboxes, index - gamevals.columns);
         }
       }
     }
-    if (index < 70) {
+    if (index < gamevals.columns * (gamevals.rows - 1)) {
       if (
-        !tempboxes[index + 10].isOpen &&
-        tempboxes[index + 10].isBomb === false
+        !tempboxes[index + gamevals.columns].isOpen &&
+        tempboxes[index + gamevals.columns].isBomb === false
       ) {
-        tempboxes[index + 10].isOpen = true;
-        tempboxes[index + 10].isFlag = "none";
-        if (tempboxes[index + 10].value === 0) {
-          tempboxes = openAdjacentBoxes(tempboxes, index + 10);
+        tempboxes[index + gamevals.columns].isOpen = true;
+        tempboxes[index + gamevals.columns].isFlag = "none";
+        if (tempboxes[index + gamevals.columns].value === 0) {
+          tempboxes = openAdjacentBoxes(tempboxes, index + gamevals.columns);
         }
       }
     }
-    if (index % 10 !== 0 && index > 9) {
+    if (index % gamevals.columns !== 0 && index > gamevals.columns - 1) {
       if (
-        !tempboxes[index - 11].isOpen &&
-        tempboxes[index - 11].isBomb === false
+        !tempboxes[index - (gamevals.columns + 1)].isOpen &&
+        tempboxes[index - (gamevals.columns + 1)].isBomb === false
       ) {
-        tempboxes[index - 11].isOpen = true;
-        tempboxes[index - 11].isFlag = "none";
-        if (tempboxes[index - 11].value === 0) {
-          tempboxes = openAdjacentBoxes(tempboxes, index - 11);
+        tempboxes[index - (gamevals.columns + 1)].isOpen = true;
+        tempboxes[index - (gamevals.columns + 1)].isFlag = "none";
+        if (tempboxes[index - (gamevals.columns + 1)].value === 0) {
+          tempboxes = openAdjacentBoxes(
+            tempboxes,
+            index - (gamevals.columns + 1)
+          );
         }
       }
     }
-    if (index % 10 !== 9 && index > 9) {
+    if (
+      index % gamevals.columns !== gamevals.columns - 1 &&
+      index > gamevals.columns - 1
+    ) {
       if (
-        !tempboxes[index - 9].isOpen &&
-        tempboxes[index - 9].isBomb === false
+        !tempboxes[index - (gamevals.columns - 1)].isOpen &&
+        tempboxes[index - (gamevals.columns - 1)].isBomb === false
       ) {
-        tempboxes[index - 9].isOpen = true;
-        tempboxes[index - 9].isFlag = "none";
-        if (tempboxes[index - 9].value === 0) {
-          tempboxes = openAdjacentBoxes(tempboxes, index - 9);
+        tempboxes[index - (gamevals.columns - 1)].isOpen = true;
+        tempboxes[index - (gamevals.columns - 1)].isFlag = "none";
+        if (tempboxes[index - (gamevals.columns - 1)].value === 0) {
+          tempboxes = openAdjacentBoxes(
+            tempboxes,
+            index - (gamevals.columns - 1)
+          );
         }
       }
     }
-    if (index % 10 !== 0 && index < 70) {
+    if (
+      index % gamevals.columns !== 0 &&
+      index < gamevals.columns * (gamevals.rows - 1)
+    ) {
       if (
-        !tempboxes[index + 9].isOpen &&
-        tempboxes[index + 9].isBomb === false
+        !tempboxes[index + (gamevals.columns - 1)].isOpen &&
+        tempboxes[index + (gamevals.columns - 1)].isBomb === false
       ) {
-        tempboxes[index + 9].isOpen = true;
-        tempboxes[index + 9].isFlag = "none";
-        if (tempboxes[index + 9].value === 0) {
-          tempboxes = openAdjacentBoxes(tempboxes, index + 9);
+        tempboxes[index + (gamevals.columns - 1)].isOpen = true;
+        tempboxes[index + (gamevals.columns - 1)].isFlag = "none";
+        if (tempboxes[index + (gamevals.columns - 1)].value === 0) {
+          tempboxes = openAdjacentBoxes(
+            tempboxes,
+            index + (gamevals.columns - 1)
+          );
         }
       }
     }
-    if (index % 10 !== 9 && index < 70) {
+    if (
+      index % gamevals.columns !== gamevals.columns - 1 &&
+      index < gamevals.columns * (gamevals.rows - 1)
+    ) {
       if (
-        !tempboxes[index + 11].isOpen &&
-        tempboxes[index + 11].isBomb === false
+        !tempboxes[index + (gamevals.columns + 1)].isOpen &&
+        tempboxes[index + (gamevals.columns + 1)].isBomb === false
       ) {
-        tempboxes[index + 11].isOpen = true;
-        tempboxes[index + 11].isFlag = "none";
-        if (tempboxes[index + 11].value === 0) {
-          tempboxes = openAdjacentBoxes(tempboxes, index + 11);
+        tempboxes[index + (gamevals.columns + 1)].isOpen = true;
+        tempboxes[index + (gamevals.columns + 1)].isFlag = "none";
+        if (tempboxes[index + (gamevals.columns + 1)].value === 0) {
+          tempboxes = openAdjacentBoxes(
+            tempboxes,
+            index + (gamevals.columns + 1)
+          );
         }
       }
     }
     return tempboxes;
   };
   const getflagnumber = () => {
-    let count = 10;
+    let count = gamevals.bombs;
     for (let i = 0; i < gamevals.rows * gamevals.columns; i++) {
       if (boxes[i].isFlag === "flag" || boxes[i].isFlag === "question") count--;
     }
@@ -276,6 +312,7 @@ export default function MinesWeeperpage() {
     for (let i = 0; i < gamevals.rows * gamevals.columns; i++) {
       if (tempboxes[i].isBomb) {
         tempboxes[i].isOpen = true;
+        tempboxes[i].isFlag = "none";
       }
     }
     return tempboxes;
@@ -341,7 +378,13 @@ export default function MinesWeeperpage() {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-10 gap-2">
+        <div
+          className="grid  gap-2"
+          style={{
+            gridTemplateColumns: `repeat(${gamevals.columns},minmax(0,1fr))`,
+            gridTemplateRows: `repeat(${gamevals.rows},minmax(0,1fr)`,
+          }}
+        >
           {boxes.map((v, i) => (
             <div
               key={i}
