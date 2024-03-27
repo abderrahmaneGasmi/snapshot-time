@@ -165,7 +165,7 @@ export default function MinesWeeperpage() {
   }, [boxes]);
   const clickbox = (index: number) => {
     if (gamevals.ended) return;
-    if (boxes[index].isOpen) return;
+    if (boxes[index].isOpen || boxes[index].isFlag !== "none") return;
 
     let tempboxes = [...boxes];
     tempboxes[index].isOpen = true;
