@@ -15,7 +15,7 @@ import { motion } from "framer-motion";
 interface box {
   value: number | string;
   isBomb: boolean;
-  isFlag: boolean;
+  isFlag: "flag" | "question" | "none";
   isOpen: boolean;
 }
 
@@ -25,6 +25,7 @@ export default function MinesWeeperpage() {
     minutes: 0,
     seconds: 0,
   });
+  const [flags, setFlags] = useState(10);
   const [boxes, setBoxes] = useState<box[]>([]);
   useEffect(() => {
     const timer = setInterval(() => {
@@ -47,7 +48,7 @@ export default function MinesWeeperpage() {
       tempboxes.push({
         value: 0,
         isBomb: false,
-        isFlag: false,
+        isFlag: "none",
         isOpen: false,
       });
     }
@@ -104,9 +105,26 @@ export default function MinesWeeperpage() {
       clearInterval(timer);
     };
   }, []);
-  function handleRightClick(event: React.MouseEvent<HTMLDivElement>) {
+  function handleRightClick(
+    event: React.MouseEvent<HTMLDivElement>,
+    index: number
+  ) {
     event.preventDefault();
-    // Your code here
+
+    if (flags === 0 && boxes[index].isFlag === "none") return;
+
+    let tempboxes = [...boxes];
+    if (tempboxes[index].isOpen) return;
+    if (tempboxes[index].isFlag === "flag") {
+      tempboxes[index].isFlag = "question";
+    } else if (tempboxes[index].isFlag === "question") {
+      setFlags((prev) => prev + 1);
+      tempboxes[index].isFlag = "none";
+    } else {
+      setFlags((prev) => prev - 1);
+      tempboxes[index].isFlag = "flag";
+    }
+    setBoxes(tempboxes);
   }
 
   const clickbox = (index: number) => {
@@ -131,7 +149,10 @@ export default function MinesWeeperpage() {
   };
   const openAdjacentBoxes = (tempboxes: box[], index: number) => {
     if (index % 10 !== 0) {
-      if (!tempboxes[index - 1].isOpen && tempboxes[index - 1].value === 0) {
+      if (
+        !tempboxes[index - 1].isOpen &&
+        tempboxes[index - 1].isBomb === false
+      ) {
         tempboxes[index - 1].isOpen = true;
         if (tempboxes[index - 1].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index - 1);
@@ -139,7 +160,10 @@ export default function MinesWeeperpage() {
       }
     }
     if (index % 10 !== 9) {
-      if (!tempboxes[index + 1].isOpen && tempboxes[index + 1].value === 0) {
+      if (
+        !tempboxes[index + 1].isOpen &&
+        tempboxes[index + 1].isBomb === false
+      ) {
         tempboxes[index + 1].isOpen = true;
         if (tempboxes[index + 1].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index + 1);
@@ -147,7 +171,10 @@ export default function MinesWeeperpage() {
       }
     }
     if (index > 9) {
-      if (!tempboxes[index - 10].isOpen && tempboxes[index - 10].value === 0) {
+      if (
+        !tempboxes[index - 10].isOpen &&
+        tempboxes[index - 10].isBomb === false
+      ) {
         tempboxes[index - 10].isOpen = true;
         if (tempboxes[index - 10].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index - 10);
@@ -155,7 +182,10 @@ export default function MinesWeeperpage() {
       }
     }
     if (index < 70) {
-      if (!tempboxes[index + 10].isOpen && tempboxes[index + 10].value === 0) {
+      if (
+        !tempboxes[index + 10].isOpen &&
+        tempboxes[index + 10].isBomb === false
+      ) {
         tempboxes[index + 10].isOpen = true;
         if (tempboxes[index + 10].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index + 10);
@@ -163,7 +193,10 @@ export default function MinesWeeperpage() {
       }
     }
     if (index % 10 !== 0 && index > 9) {
-      if (!tempboxes[index - 11].isOpen && tempboxes[index - 11].value === 0) {
+      if (
+        !tempboxes[index - 11].isOpen &&
+        tempboxes[index - 11].isBomb === false
+      ) {
         tempboxes[index - 11].isOpen = true;
         if (tempboxes[index - 11].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index - 11);
@@ -171,7 +204,10 @@ export default function MinesWeeperpage() {
       }
     }
     if (index % 10 !== 9 && index > 9) {
-      if (!tempboxes[index - 9].isOpen && tempboxes[index - 9].value === 0) {
+      if (
+        !tempboxes[index - 9].isOpen &&
+        tempboxes[index - 9].isBomb === false
+      ) {
         tempboxes[index - 9].isOpen = true;
         if (tempboxes[index - 9].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index - 9);
@@ -179,7 +215,10 @@ export default function MinesWeeperpage() {
       }
     }
     if (index % 10 !== 0 && index < 70) {
-      if (!tempboxes[index + 9].isOpen && tempboxes[index + 9].value === 0) {
+      if (
+        !tempboxes[index + 9].isOpen &&
+        tempboxes[index + 9].isBomb === false
+      ) {
         tempboxes[index + 9].isOpen = true;
         if (tempboxes[index + 9].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index + 9);
@@ -187,7 +226,10 @@ export default function MinesWeeperpage() {
       }
     }
     if (index % 10 !== 9 && index < 70) {
-      if (!tempboxes[index + 11].isOpen && tempboxes[index + 11].value === 0) {
+      if (
+        !tempboxes[index + 11].isOpen &&
+        tempboxes[index + 11].isBomb === false
+      ) {
         tempboxes[index + 11].isOpen = true;
         if (tempboxes[index + 11].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index + 11);
@@ -197,7 +239,10 @@ export default function MinesWeeperpage() {
     return tempboxes;
   };
   return (
-    <main className="h-screen flex flex-col items-center justify-evenly relative">
+    <main
+      className="h-screen flex flex-col items-center justify-evenly relative"
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <Link
         className="absolute top-4 left-4 flex  items-center justify-center text-pink-50 font-bold text-4xl cursor-pointer gap-2 bg-indigo-900 rounded p-2 z-50
       
@@ -249,7 +294,9 @@ export default function MinesWeeperpage() {
               view={flag.viewBox}
               classlist="w-8 h-8 fill-current text-pink-50"
             />{" "}
-            <div className="text-pink-50 text-3xl">50</div>
+            <div className="text-pink-50 text-3xl">
+              {flags < 10 ? "0" + flags : flags}
+            </div>
           </div>
         </div>
         <div className="grid grid-cols-10 gap-2">
@@ -258,7 +305,7 @@ export default function MinesWeeperpage() {
               key={i}
               className="p-2 bg-indigo-900 rounded flex items-center justify-center cursor-pointer"
               onClick={() => clickbox(i)}
-              onContextMenu={handleRightClick}
+              onContextMenu={(e) => handleRightClick(e, i)}
             >
               <div
                 className={`w-12 h-12 ${
@@ -284,6 +331,11 @@ export default function MinesWeeperpage() {
                 } text-4xl flex justify-center items-center font-bold`}
               >
                 {v.isOpen ? (v.isBomb ? "💣" : v.value ? v.value : "") : ""}
+                {v.isFlag === "flag"
+                  ? "🚩"
+                  : v.isFlag === "question"
+                  ? "❓"
+                  : ""}
               </div>
             </div>
           ))}
