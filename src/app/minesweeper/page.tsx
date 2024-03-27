@@ -66,6 +66,11 @@ export default function MinesWeeperpage() {
       clearInterval(timer);
     };
   }, []);
+  function handleRightClick(event: React.MouseEvent<HTMLDivElement>) {
+    event.preventDefault();
+    // Your code here
+  }
+
   const clickbox = (index: number) => {
     if (boxes[index].isOpen) return;
     setBoxes((prev) => {
@@ -141,6 +146,7 @@ export default function MinesWeeperpage() {
               key={i}
               className="p-2 bg-indigo-900 rounded flex items-center justify-center cursor-pointer"
               onClick={() => clickbox(i)}
+              onContextMenu={handleRightClick}
             >
               <div
                 className={`w-12 h-12 ${
