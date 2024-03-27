@@ -131,7 +131,7 @@ export default function MinesWeeperpage() {
   };
   const openAdjacentBoxes = (tempboxes: box[], index: number) => {
     if (index % 10 !== 0) {
-      if (!tempboxes[index - 1].isOpen) {
+      if (!tempboxes[index - 1].isOpen && tempboxes[index - 1].value === 0) {
         tempboxes[index - 1].isOpen = true;
         if (tempboxes[index - 1].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index - 1);
@@ -139,7 +139,7 @@ export default function MinesWeeperpage() {
       }
     }
     if (index % 10 !== 9) {
-      if (!tempboxes[index + 1].isOpen) {
+      if (!tempboxes[index + 1].isOpen && tempboxes[index + 1].value === 0) {
         tempboxes[index + 1].isOpen = true;
         if (tempboxes[index + 1].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index + 1);
@@ -147,7 +147,7 @@ export default function MinesWeeperpage() {
       }
     }
     if (index > 9) {
-      if (!tempboxes[index - 10].isOpen) {
+      if (!tempboxes[index - 10].isOpen && tempboxes[index - 10].value === 0) {
         tempboxes[index - 10].isOpen = true;
         if (tempboxes[index - 10].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index - 10);
@@ -155,7 +155,7 @@ export default function MinesWeeperpage() {
       }
     }
     if (index < 70) {
-      if (!tempboxes[index + 10].isOpen) {
+      if (!tempboxes[index + 10].isOpen && tempboxes[index + 10].value === 0) {
         tempboxes[index + 10].isOpen = true;
         if (tempboxes[index + 10].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index + 10);
@@ -163,7 +163,7 @@ export default function MinesWeeperpage() {
       }
     }
     if (index % 10 !== 0 && index > 9) {
-      if (!tempboxes[index - 11].isOpen) {
+      if (!tempboxes[index - 11].isOpen && tempboxes[index - 11].value === 0) {
         tempboxes[index - 11].isOpen = true;
         if (tempboxes[index - 11].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index - 11);
@@ -171,7 +171,7 @@ export default function MinesWeeperpage() {
       }
     }
     if (index % 10 !== 9 && index > 9) {
-      if (!tempboxes[index - 9].isOpen) {
+      if (!tempboxes[index - 9].isOpen && tempboxes[index - 9].value === 0) {
         tempboxes[index - 9].isOpen = true;
         if (tempboxes[index - 9].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index - 9);
@@ -179,7 +179,7 @@ export default function MinesWeeperpage() {
       }
     }
     if (index % 10 !== 0 && index < 70) {
-      if (!tempboxes[index + 9].isOpen) {
+      if (!tempboxes[index + 9].isOpen && tempboxes[index + 9].value === 0) {
         tempboxes[index + 9].isOpen = true;
         if (tempboxes[index + 9].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index + 9);
@@ -187,7 +187,7 @@ export default function MinesWeeperpage() {
       }
     }
     if (index % 10 !== 9 && index < 70) {
-      if (!tempboxes[index + 11].isOpen) {
+      if (!tempboxes[index + 11].isOpen && tempboxes[index + 11].value === 0) {
         tempboxes[index + 11].isOpen = true;
         if (tempboxes[index + 11].value === 0) {
           tempboxes = openAdjacentBoxes(tempboxes, index + 11);
