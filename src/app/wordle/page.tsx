@@ -26,6 +26,7 @@ export default function Wordlepage() {
   }, []);
 
   useEffect(() => {
+    if (gameended.ended) return;
     if (currenttry.tries === tries) {
       return setGameended({
         ended: true,
