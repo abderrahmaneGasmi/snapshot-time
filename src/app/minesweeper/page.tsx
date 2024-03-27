@@ -17,6 +17,29 @@ import ConfettiScreen from "../assets/ConfettiScreen";
 import { motion } from "framer-motion";
 export default function MinesWeeperpage() {
   const [showdropdown, setShowdropdown] = useState(false);
+  const [time, setTimer] = useState({
+    minutes: 0,
+    seconds: 0,
+  });
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimer((prev) => {
+        if (prev.seconds === 59) {
+          return {
+            minutes: prev.minutes + 1,
+            seconds: 0,
+          };
+        }
+        return {
+          minutes: prev.minutes,
+          seconds: prev.seconds + 1,
+        };
+      });
+    }, 1000);
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
   return (
     <main className="h-screen flex flex-col items-center justify-evenly relative">
       <Link
@@ -59,7 +82,10 @@ export default function MinesWeeperpage() {
               view={timer.viewBox}
               classlist="w-8 h-8 fill-current text-pink-50"
             />{" "}
-            <div className="text-pink-50 text-3xl">00:00</div>
+            <div className="text-pink-50 text-3xl">
+              {time.minutes < 10 ? "0" + time.minutes : time.minutes}:
+              {time.seconds < 10 ? "0" + time.seconds : time.seconds}
+            </div>
           </div>
           <div className="flex  gap-4 items-center">
             <Svg
