@@ -25,10 +25,18 @@ export default function Ballspage() {
     coefficientOfRestitution: 0.8,
     coefficientOfRestitutionCollision: 0.65,
     maxSpeed: 3,
-    balls: 50,
+    ballsnum: 50,
     startcollinding: false,
     objects: [] as { x: number; y: number; shape: string; color: string }[],
     maxobjects: 1,
+    balls: [] as {
+      x: number;
+      y: number;
+      dx: number;
+      dy: number;
+      radius: number;
+      color: string;
+    }[],
   });
   React.useEffect(() => {
     if (box.current) {
@@ -48,65 +56,95 @@ export default function Ballspage() {
       const ctx = canvas.getContext("2d");
       if (ctx) {
         if (variables.startcollinding) {
-          const balls: {
-            x: number;
-            y: number;
-            dx: number;
-            dy: number;
-            radius: number;
-            color: string;
-          }[] = [];
-          for (let i = 0; i < variables.balls; i++) {
-            let position = {
-              x: Math.random() * canvas.width,
-              y: Math.random() * canvas.height,
-            };
-            while (true) {
-              position = {
+          if (variables.balls.length === 0) {
+            const balls: {
+              x: number;
+              y: number;
+              dx: number;
+              dy: number;
+              radius: number;
+              color: string;
+            }[] = [];
+            for (let i = 0; i < variables.ballsnum; i++) {
+              let position = {
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
               };
-              if (
-                position.x + variables.radius > canvas.width ||
-                position.x - variables.radius < 0
-              )
-                continue;
-              else if (
-                position.y + variables.radius > canvas.height ||
-                position.y - variables.radius < 0
-              )
-                continue;
-              // else {
-              //   // console.log(position.x, position.y);
-              //   break;
-              // }
-              let isColliding = false;
-              for (let j = 0; j < balls.length; j++) {
-                const dx = balls[j].x - position.x;
-                const dy = balls[j].y - position.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance < balls[j].radius + variables.radius) {
-                  isColliding = true;
+              while (true) {
+                position = {
+                  x: Math.random() * canvas.width,
+                  y: Math.random() * canvas.height,
+                };
+                if (
+                  position.x + variables.radius > canvas.width ||
+                  position.x - variables.radius < 0
+                )
+                  continue;
+                else if (
+                  position.y + variables.radius > canvas.height ||
+                  position.y - variables.radius < 0
+                )
+                  continue;
+                // else {
+                //   // console.log(position.x, position.y);
+                //   break;
+                // }
+                let isColliding = false;
+                for (let j = 0; j < balls.length; j++) {
+                  const dx = balls[j].x - position.x;
+                  const dy = balls[j].y - position.y;
+                  const distance = Math.sqrt(dx * dx + dy * dy);
+                  if (distance < balls[j].radius + variables.radius) {
+                    isColliding = true;
+                    break;
+                  }
+                }
+
+                variables.objects.forEach((object) => {
+                  switch (object.shape) {
+                    case "circle": {
+                      const dx = object.x - position.x;
+                      const dy = object.y - position.y;
+                      const distance = Math.sqrt(dx * dx + dy * dy);
+                      if (distance < variables.radius + 50) {
+                        isColliding = true;
+                      }
+                      break;
+                    }
+                    case "square": {
+                      if (
+                        position.x + variables.radius > object.x &&
+                        position.x - variables.radius < object.x + 100 &&
+                        position.y + variables.radius > object.y &&
+                        position.y - variables.radius < object.y + 100
+                      ) {
+                        isColliding = true;
+                      }
+                      break;
+                    }
+                  }
+                });
+
+                if (!isColliding) {
+                  balls.push({
+                    x: position.x,
+                    y: position.y,
+                    dx: Math.random() * 5 - 2.5,
+                    dy: Math.random() * 5 - 2.5,
+                    radius: variables.radius,
+                    color: `rgb(${Math.random() * 255},${Math.random() * 255},${
+                      Math.random() * 255
+                    })`,
+                  });
                   break;
                 }
               }
-              if (!isColliding) {
-                balls.push({
-                  x: position.x,
-                  y: position.y,
-                  dx: Math.random() * 5 - 2.5,
-                  dy: Math.random() * 5 - 2.5,
-                  radius: variables.radius,
-                  color: `rgb(${Math.random() * 255},${Math.random() * 255},${
-                    Math.random() * 255
-                  })`,
-                });
-                break;
-              }
             }
+            setVariables((prev) => {
+              return { ...prev, balls: balls };
+            });
           }
-
-          animate(ctx, canvas, balls);
+          animate(ctx, canvas, variables.balls);
         }
       }
     }
