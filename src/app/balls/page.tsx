@@ -16,44 +16,6 @@ const shapes = [
       ctx.rect(x, y, 100, 100);
     },
   },
-  {
-    name: "triangle",
-    draw: (ctx: CanvasRenderingContext2D, x: number, y: number) => {
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + 100, y);
-      ctx.lineTo(x + 50, y + 100);
-    },
-  },
-  {
-    name: "rectangle",
-    draw: (ctx: CanvasRenderingContext2D, x: number, y: number) => {
-      ctx.rect(x, y, 100, 50);
-    },
-  },
-  {
-    name: "pentagon",
-    draw: (ctx: CanvasRenderingContext2D, x: number, y: number) => {
-      ctx.beginPath();
-      for (let i = 0; i < 5; i++) {
-        ctx.lineTo(
-          x + 50 * Math.cos((i * 2 * Math.PI) / 5),
-          y + 50 * Math.sin((i * 2 * Math.PI) / 5)
-        );
-      }
-    },
-  },
-  {
-    name: "hexagon",
-    draw: (ctx: CanvasRenderingContext2D, x: number, y: number) => {
-      ctx.beginPath();
-      for (let i = 0; i < 6; i++) {
-        ctx.lineTo(
-          x + 50 * Math.cos((i * 2 * Math.PI) / 6),
-          y + 50 * Math.sin((i * 2 * Math.PI) / 6)
-        );
-      }
-    },
-  },
 ];
 export default function Ballspage() {
   const box = React.useRef<HTMLDivElement>(null);
@@ -65,7 +27,7 @@ export default function Ballspage() {
     maxSpeed: 3,
     balls: 50,
     startcollinding: false,
-    objects: [] as { x: number; y: number; shape: string }[],
+    objects: [] as { x: number; y: number; shape: string; color: string }[],
     maxobjects: 1,
   });
   React.useEffect(() => {
@@ -161,6 +123,15 @@ export default function Ballspage() {
       }[]
     ) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      variables.objects.forEach((object) => {
+        const shape = shapes.find((shape) => shape.name === object.shape);
+        if (shape) {
+          ctx.beginPath();
+          shape.draw(ctx, object.x, object.y);
+          ctx.fillStyle = object.color;
+          ctx.fill();
+        }
+      });
       balls.forEach((ball) => {
         ball.x += ball.dx;
         ball.y += ball.dy;
@@ -218,6 +189,76 @@ export default function Ballspage() {
             otherBall.dy = Math.min(newVelocities.vel2.y, variables.maxSpeed);
           }
         });
+        variables.objects.forEach((object) => {
+          switch (object.shape) {
+            case "circle": {
+              const dx = object.x - ball.x;
+              const dy = object.y - ball.y;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+              if (distance < ball.radius + 50) {
+                const overlap = ball.radius + 50 - distance;
+                const separationVector = {
+                  x: (dx / distance) * overlap,
+                  y: (dy / distance) * overlap,
+                };
+                ball.x -= separationVector.x * 0.5;
+                ball.y -= separationVector.y * 0.5;
+                const newVelocities = resolveCollision({
+                  vel1: { x: ball.dx, y: ball.dy },
+                  vel2: { x: 0, y: 0 },
+                  normal: { x: dx / distance, y: dy / distance },
+                  coefficientOfRestitution: variables.coefficientOfRestitution,
+                });
+                ball.dx = Math.min(newVelocities.vel1.x, variables.maxSpeed);
+                ball.dy = Math.min(newVelocities.vel1.y, variables.maxSpeed);
+              }
+              break;
+            }
+            case "square": {
+              if (
+                ball.x + ball.radius > object.x &&
+                ball.x - ball.radius < object.x + 100 &&
+                ball.y + ball.radius > object.y &&
+                ball.y - ball.radius < object.y + 100
+              ) {
+                // Collision detected
+                if (
+                  ball.x + ball.radius > object.x &&
+                  ball.x - ball.radius < object.x + 100
+                ) {
+                  // Ball collided with the vertical sides of the square
+                  ball.dx *= -variables.coefficientOfRestitution;
+                }
+                if (
+                  ball.y + ball.radius > object.y &&
+                  ball.y - ball.radius < object.y + 100
+                ) {
+                  // Ball collided with the horizontal sides of the square
+                  ball.dy *= -variables.coefficientOfRestitution;
+                }
+
+                // Adjust ball position to prevent overlap
+                if (ball.x + ball.radius > object.x && ball.x < object.x) {
+                  ball.x = object.x - ball.radius;
+                } else if (
+                  ball.x - ball.radius < object.x + 100 &&
+                  ball.x > object.x + 100
+                ) {
+                  ball.x = object.x + 100 + ball.radius;
+                }
+                if (ball.y + ball.radius > object.y && ball.y < object.y) {
+                  ball.y = object.y - ball.radius;
+                } else if (
+                  ball.y - ball.radius < object.y + 100 &&
+                  ball.y > object.y + 100
+                ) {
+                  ball.y = object.y + 100 + ball.radius;
+                }
+              }
+              break;
+            }
+          }
+        });
 
         // Draw the ball
         ctx.beginPath();
@@ -266,29 +307,18 @@ export default function Ballspage() {
 
   const drawobject = () => {
     if (variables.objects.length > variables.maxobjects) return;
-    if (canva) {
-      const ctx = canva.getContext("2d");
-      if (ctx) {
-        ctx.beginPath();
-        // draw a random shape with max width and height of 100
-
-        const shape = shapes[Math.floor(Math.random() * shapes.length)];
-
-        // x and y are random values between 150 and canvas.width - 150
-        const x = Math.random() * (canva.width - 140) + 20;
-        const y = Math.random() * (canva.height - 140) + 20;
-
-        console.log(x, y, canva.width, canva.height);
-        ctx.moveTo(x, y);
-        ctx.beginPath();
-        shape.draw(ctx, x, y);
-
-        ctx.closePath();
-
-        ctx.fillStyle = "cadetblue";
-        ctx.fill();
-      }
-    }
+    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+    const x = Math.random() * canva!.width;
+    const y = Math.random() * canva!.height;
+    const color = `rgb(${Math.random() * 255},${Math.random() * 255},${
+      Math.random() * 255
+    })`;
+    setVariables((prev) => {
+      return {
+        ...prev,
+        objects: [...prev.objects, { x, y, shape: shape.name, color }],
+      };
+    });
   };
   return (
     <main className="h-screen flex flex-col items-center justify-around relative">
