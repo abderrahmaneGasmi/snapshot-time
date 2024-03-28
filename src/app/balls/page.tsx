@@ -1,17 +1,72 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import Svg from "../assets/Svg";
 import { chevronBack } from "../helpers/svgs";
-
+const shapes = [
+  {
+    name: "circle",
+    draw: (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+      ctx.arc(x, y, 50, 0, 2 * Math.PI);
+    },
+  },
+  {
+    name: "square",
+    draw: (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+      ctx.rect(x, y, 100, 100);
+    },
+  },
+  {
+    name: "triangle",
+    draw: (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 100, y);
+      ctx.lineTo(x + 50, y + 100);
+    },
+  },
+  {
+    name: "rectangle",
+    draw: (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+      ctx.rect(x, y, 100, 50);
+    },
+  },
+  {
+    name: "pentagon",
+    draw: (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+      ctx.beginPath();
+      for (let i = 0; i < 5; i++) {
+        ctx.lineTo(
+          x + 50 * Math.cos((i * 2 * Math.PI) / 5),
+          y + 50 * Math.sin((i * 2 * Math.PI) / 5)
+        );
+      }
+    },
+  },
+  {
+    name: "hexagon",
+    draw: (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        ctx.lineTo(
+          x + 50 * Math.cos((i * 2 * Math.PI) / 6),
+          y + 50 * Math.sin((i * 2 * Math.PI) / 6)
+        );
+      }
+    },
+  },
+];
 export default function Ballspage() {
   const box = React.useRef<HTMLDivElement>(null);
+  const [canva, setcanva] = useState<HTMLCanvasElement | null>(null);
   const [variables, setVariables] = useState({
     radius: 10,
     coefficientOfRestitution: 0.8,
     coefficientOfRestitutionCollision: 0.65,
-    maxSpeed: 5,
-    balls: 10,
+    maxSpeed: 3,
+    balls: 50,
+    startcollinding: false,
+    objects: [] as { x: number; y: number; shape: string }[],
+    maxobjects: 1,
   });
   React.useEffect(() => {
     if (box.current) {
@@ -20,72 +75,77 @@ export default function Ballspage() {
       if (box.current.querySelector("canvas")) {
         box.current.removeChild(box.current.querySelector("canvas")!);
       }
-
-      const canvas = document.createElement("canvas");
-      canvas.width = 500;
-      canvas.height = 500;
+      let canvas = null;
+      if (!canva) {
+        canvas = document.createElement("canvas");
+        canvas.width = 500;
+        canvas.height = 500;
+        setcanva(canvas);
+      } else canvas = canva;
       box.current.appendChild(canvas);
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        const balls: {
-          x: number;
-          y: number;
-          dx: number;
-          dy: number;
-          radius: number;
-          color: string;
-        }[] = [];
-        for (let i = 0; i < variables.balls; i++) {
-          let position = {
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-          };
-          while (true) {
-            position = {
+        if (variables.startcollinding) {
+          const balls: {
+            x: number;
+            y: number;
+            dx: number;
+            dy: number;
+            radius: number;
+            color: string;
+          }[] = [];
+          for (let i = 0; i < variables.balls; i++) {
+            let position = {
               x: Math.random() * canvas.width,
               y: Math.random() * canvas.height,
             };
-            if (
-              position.x + variables.radius > canvas.width ||
-              position.x - variables.radius < 0
-            )
-              continue;
-            else if (
-              position.y + variables.radius > canvas.height ||
-              position.y - variables.radius < 0
-            )
-              continue;
-            // else {
-            //   // console.log(position.x, position.y);
-            //   break;
-            // }
-            let isColliding = false;
-            for (let j = 0; j < balls.length; j++) {
-              const dx = balls[j].x - position.x;
-              const dy = balls[j].y - position.y;
-              const distance = Math.sqrt(dx * dx + dy * dy);
-              if (distance < balls[j].radius + variables.radius) {
-                isColliding = true;
+            while (true) {
+              position = {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+              };
+              if (
+                position.x + variables.radius > canvas.width ||
+                position.x - variables.radius < 0
+              )
+                continue;
+              else if (
+                position.y + variables.radius > canvas.height ||
+                position.y - variables.radius < 0
+              )
+                continue;
+              // else {
+              //   // console.log(position.x, position.y);
+              //   break;
+              // }
+              let isColliding = false;
+              for (let j = 0; j < balls.length; j++) {
+                const dx = balls[j].x - position.x;
+                const dy = balls[j].y - position.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < balls[j].radius + variables.radius) {
+                  isColliding = true;
+                  break;
+                }
+              }
+              if (!isColliding) {
+                balls.push({
+                  x: position.x,
+                  y: position.y,
+                  dx: Math.random() * 5 - 2.5,
+                  dy: Math.random() * 5 - 2.5,
+                  radius: variables.radius,
+                  color: `rgb(${Math.random() * 255},${Math.random() * 255},${
+                    Math.random() * 255
+                  })`,
+                });
                 break;
               }
             }
-            if (!isColliding) {
-              balls.push({
-                x: position.x,
-                y: position.y,
-                dx: Math.random() * 5 - 2.5,
-                dy: Math.random() * 5 - 2.5,
-                radius: variables.radius,
-                color: `rgb(${Math.random() * 255},${Math.random() * 255},${
-                  Math.random() * 255
-                })`,
-              });
-              break;
-            }
           }
+
+          animate(ctx, canvas, balls);
         }
-        console.log(balls);
-        animate(ctx, canvas, balls);
       }
     }
     function animate(
@@ -202,7 +262,34 @@ export default function Ballspage() {
 
       requestAnimationFrame(() => animate(ctx, canvas, balls));
     }
-  }, []);
+  }, [variables]);
+
+  const drawobject = () => {
+    if (variables.objects.length > variables.maxobjects) return;
+    if (canva) {
+      const ctx = canva.getContext("2d");
+      if (ctx) {
+        ctx.beginPath();
+        // draw a random shape with max width and height of 100
+
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+
+        // x and y are random values between 150 and canvas.width - 150
+        const x = Math.random() * (canva.width - 140) + 20;
+        const y = Math.random() * (canva.height - 140) + 20;
+
+        console.log(x, y, canva.width, canva.height);
+        ctx.moveTo(x, y);
+        ctx.beginPath();
+        shape.draw(ctx, x, y);
+
+        ctx.closePath();
+
+        ctx.fillStyle = "cadetblue";
+        ctx.fill();
+      }
+    }
+  };
   return (
     <main className="h-screen flex flex-col items-center justify-around relative">
       <Link
@@ -228,6 +315,26 @@ export default function Ballspage() {
         >
           <div className="flex flex-col items-center gap-4 justify-self-end ">
             <div className="text-pink-50 text-7xl "> Ball Simulator</div>
+            <div className="flex align-center gap-4">
+              <div
+                className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800"
+                onClick={() => {
+                  drawobject();
+                }}
+              >
+                Add an Object
+              </div>
+              <div
+                className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800"
+                onClick={() => {
+                  setVariables((prev) => {
+                    return { ...prev, startcollinding: !prev.startcollinding };
+                  });
+                }}
+              >
+                start collinding
+              </div>
+            </div>
             <div
               ref={box}
               className=" border-2 rounded-md border-gray-50 
