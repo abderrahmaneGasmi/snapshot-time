@@ -8,6 +8,10 @@ export default function Ballspage() {
   const box = React.useRef<HTMLDivElement>(null);
   const [variables, setVariables] = useState({
     radius: 10,
+    coefficientOfRestitution: 0.8,
+    coefficientOfRestitutionCollision: 0.65,
+    maxSpeed: 5,
+    balls: 10,
   });
   React.useEffect(() => {
     if (box.current) {
@@ -31,7 +35,7 @@ export default function Ballspage() {
           radius: number;
           color: string;
         }[] = [];
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < variables.balls; i++) {
           let position = {
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
@@ -69,9 +73,9 @@ export default function Ballspage() {
               balls.push({
                 x: position.x,
                 y: position.y,
-                dx: 0,
-                dy: 0,
-                radius: 10,
+                dx: Math.random() * 5 - 2.5,
+                dy: Math.random() * 5 - 2.5,
+                radius: variables.radius,
                 color: `rgb(${Math.random() * 255},${Math.random() * 255},${
                   Math.random() * 255
                 })`,
@@ -79,18 +83,8 @@ export default function Ballspage() {
               break;
             }
           }
-          balls.push({
-            x: position.x,
-            y: position.y,
-            dx: Math.random() * 5 - 2.5,
-            dy: Math.random() * 5 - 2.5,
-            radius: variables.radius,
-            color: `rgb(${Math.random() * 255},${Math.random() * 255},${
-              Math.random() * 255
-            })`,
-          });
         }
-
+        console.log(balls);
         animate(ctx, canvas, balls);
       }
     }
@@ -110,23 +104,102 @@ export default function Ballspage() {
       balls.forEach((ball) => {
         ball.x += ball.dx;
         ball.y += ball.dy;
-        if (
-          ball.x + variables.radius > canvas.width ||
-          ball.x - variables.radius < 0
-        ) {
-          ball.dx = -ball.dx;
+
+        // Check for collision with walls
+        if (ball.x + ball.radius > canvas.width) {
+          ball.x = canvas.width - ball.radius; // Adjust position to keep the ball within the canvas
+          ball.dx *= -variables.coefficientOfRestitution; // Lower horizontal velocity
+        } else if (ball.x - ball.radius < 0) {
+          ball.x = ball.radius; // Adjust position to keep the ball within the canvas
+          ball.dx *= -variables.coefficientOfRestitution; // Lower horizontal velocity
         }
-        if (
-          ball.y + variables.radius > canvas.height ||
-          ball.y - variables.radius < 0
-        ) {
-          ball.dy = -ball.dy;
+
+        // Check for collision with vertical boundaries
+        if (ball.y + ball.radius > canvas.height) {
+          ball.y = canvas.height - ball.radius; // Adjust position to keep the ball within the canvas
+          ball.dy *= -variables.coefficientOfRestitution; // Lower vertical velocity
+        } else if (ball.y - ball.radius < 0) {
+          ball.y = ball.radius; // Adjust position to keep the ball within the canvas
+          ball.dy *= -variables.coefficientOfRestitution; // Lower vertical velocity
         }
+
+        balls.forEach((otherBall) => {
+          if (ball === otherBall) return;
+          const dx = otherBall.x - ball.x;
+          const dy = otherBall.y - ball.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          // Collision detection
+          if (distance < ball.radius + otherBall.radius) {
+            // Collision response
+            const overlap = ball.radius + otherBall.radius - distance;
+            const separationVector = {
+              x: (dx / distance) * overlap,
+              y: (dy / distance) * overlap,
+            };
+            ball.x -= separationVector.x * 0.5;
+            ball.y -= separationVector.y * 0.5;
+            otherBall.x += separationVector.x * 0.5;
+            otherBall.y += separationVector.y * 0.5;
+
+            // Calculate new velocities after collision
+            const newVelocities = resolveCollision({
+              vel1: { x: ball.dx, y: ball.dy },
+              vel2: { x: otherBall.dx, y: otherBall.dy },
+              normal: { x: dx / distance, y: dy / distance },
+              coefficientOfRestitution:
+                variables.coefficientOfRestitutionCollision,
+            });
+
+            // Update velocities of the balls
+            ball.dx = Math.min(newVelocities.vel1.x, variables.maxSpeed);
+            ball.dy = Math.min(newVelocities.vel1.y, variables.maxSpeed);
+            otherBall.dx = Math.min(newVelocities.vel2.x, variables.maxSpeed);
+            otherBall.dy = Math.min(newVelocities.vel2.y, variables.maxSpeed);
+          }
+        });
+
+        // Draw the ball
         ctx.beginPath();
         ctx.arc(ball.x, ball.y, variables.radius, 0, Math.PI * 2);
         ctx.fillStyle = ball.color;
         ctx.fill();
       });
+
+      function resolveCollision({
+        vel1,
+        vel2,
+        normal,
+        coefficientOfRestitution,
+      }: {
+        vel1: { x: number; y: number };
+        vel2: { x: number; y: number };
+        normal: { x: number; y: number };
+        coefficientOfRestitution: number;
+      }) {
+        // Calculate relative velocity
+        const relativeVelocity = { x: vel2.x - vel1.x, y: vel2.y - vel1.y };
+
+        // Calculate impulse along normal direction
+        const impulse =
+          2 * (relativeVelocity.x * normal.x + relativeVelocity.y * normal.y);
+
+        // Apply coefficient of restitution
+        const newImpulse = impulse * coefficientOfRestitution;
+
+        // Calculate new velocities after collision
+        const newVel1 = {
+          x: vel1.x + newImpulse * normal.x,
+          y: vel1.y + newImpulse * normal.y,
+        };
+        const newVel2 = {
+          x: vel2.x - newImpulse * normal.x,
+          y: vel2.y - newImpulse * normal.y,
+        };
+
+        return { vel1: newVel1, vel2: newVel2 };
+      }
+
       requestAnimationFrame(() => animate(ctx, canvas, balls));
     }
   }, []);
