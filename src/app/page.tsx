@@ -1,7 +1,15 @@
 "use client";
 
 import Svg from "./assets/Svg";
-import { boxes, card, mine, search, snake, tictactoe } from "./helpers/svgs";
+import {
+  ball,
+  boxes,
+  card,
+  mine,
+  search,
+  snake,
+  tictactoe,
+} from "./helpers/svgs";
 import { useState } from "react";
 import Link from "next/link";
 export default function Home() {
@@ -15,7 +23,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="flex gap-4 flex-wrap w-80 min-h-96 content-start justify-evenly ">
+      <div className="flex gap-4 flex-wrap w-96 min-h-96 content-start justify-evenly ">
         <div
           onMouseEnter={() => setGame("Card Game")}
           onMouseLeave={() => setGame("")}
@@ -56,6 +64,12 @@ export default function Home() {
           onMouseLeave={() => setGame("")}
         >
           <Icon path={mine.path} view={mine.viewBox} url="/minesweeper" />
+        </div>
+        <div
+          onMouseEnter={() => setGame("Balls Simulator Game")}
+          onMouseLeave={() => setGame("")}
+        >
+          <Icon path={ball.path} view={ball.viewBox} url="/balls" />
         </div>
         <div
           onMouseEnter={() => setGame("Snake Game")}
