@@ -24,11 +24,11 @@ export default function Ballspage() {
     radius: 10,
     coefficientOfRestitution: 0.8,
     coefficientOfRestitutionCollision: 0.65,
-    maxSpeed: 3,
+    maxSpeed: 2.2,
     ballsnum: 50,
     startcollinding: false,
     objects: [] as { x: number; y: number; shape: string; color: string }[],
-    maxobjects: 1,
+    maxobjects: 3,
     balls: [] as {
       x: number;
       y: number;
@@ -36,6 +36,7 @@ export default function Ballspage() {
       dy: number;
       radius: number;
       color: string;
+      id: string;
     }[],
   });
   React.useEffect(() => {
@@ -56,7 +57,7 @@ export default function Ballspage() {
       const ctx = canvas.getContext("2d");
       if (ctx) {
         if (variables.startcollinding) {
-          if (variables.balls.length === 0) {
+          if (variables.balls.length < variables.ballsnum) {
             const balls: {
               x: number;
               y: number;
@@ -64,8 +65,9 @@ export default function Ballspage() {
               dy: number;
               radius: number;
               color: string;
-            }[] = [];
-            for (let i = 0; i < variables.ballsnum; i++) {
+              id: string;
+            }[] = [...variables.balls];
+            for (let i = variables.balls.length; i < variables.ballsnum; i++) {
               let position = {
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
@@ -135,14 +137,52 @@ export default function Ballspage() {
                     color: `rgb(${Math.random() * 255},${Math.random() * 255},${
                       Math.random() * 255
                     })`,
+                    id: i.toString(),
                   });
                   break;
                 }
               }
             }
             setVariables((prev) => {
-              return { ...prev, balls: balls };
+              return { ...prev, balls };
             });
+          } else {
+            let ballsidsexistinsideotherobjects: string[] = [];
+            variables.balls.forEach((ball) => {
+              variables.objects.forEach((object) => {
+                switch (object.shape) {
+                  case "circle": {
+                    const dx = object.x - ball.x;
+                    const dy = object.y - ball.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < ball.radius + 50) {
+                      ballsidsexistinsideotherobjects.push(ball.id);
+                    }
+                    break;
+                  }
+                  case "square": {
+                    if (
+                      ball.x + ball.radius > object.x &&
+                      ball.x - ball.radius < object.x + 100 &&
+                      ball.y + ball.radius > object.y &&
+                      ball.y - ball.radius < object.y + 100
+                    ) {
+                      ballsidsexistinsideotherobjects.push(ball.id);
+                    }
+                    break;
+                  }
+                }
+              });
+            });
+            if (ballsidsexistinsideotherobjects.length > 0)
+              setVariables((prev) => {
+                return {
+                  ...prev,
+                  balls: prev.balls.filter(
+                    (ball) => !ballsidsexistinsideotherobjects.includes(ball.id)
+                  ),
+                };
+              });
           }
           animate(ctx, canvas, variables.balls);
         }
