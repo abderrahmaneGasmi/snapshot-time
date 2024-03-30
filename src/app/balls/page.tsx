@@ -552,7 +552,17 @@ export default function Ballspage() {
               ref={box}
               className=" border-2 rounded-md border-gray-50 
        "
-            ></div>
+            >
+              {!canva && (
+                <div
+                  className="flex items-center justify-center skeltoneffect"
+                  style={{
+                    width: "500px",
+                    height: "500px",
+                  }}
+                ></div>
+              )}
+            </div>
           </div>
           <div className="flex flex-col gap-8">
             <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800 p-4 mx-auto">
@@ -664,6 +674,34 @@ export default function Ballspage() {
               />
               <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
                 1
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div
+                className="text-pink-50 text-2xl bg-green-700 p-4 rounded-md cursor-pointer hover:bg-green-800 mx-auto"
+                onClick={() => {
+                  setVariables((prev) => {
+                    let obj = {
+                      balls: [],
+                      objects: [],
+                      maxSpeed: 2.2,
+                      coefficientOfRestitution: 0.7,
+                      ballsnum: 50,
+                      coefficientOfRestitutionCollision: 0.65,
+                      maxobjects: 3,
+                      radius: 10,
+                      startcollinding: false,
+                    };
+
+                    oldvariables.current = { ...obj };
+                    return {
+                      ...prev,
+                      ...obj,
+                    };
+                  });
+                }}
+              >
+                Restart the simulation
               </div>
             </div>
           </div>
