@@ -255,6 +255,8 @@ export default function Ballspage() {
             oldvariables.current = { ...variables };
           }
           animate(ctx, canvas, variables.balls);
+        } else {
+          if (animateRef.current) cancelAnimationFrame(animateRef.current);
         }
       }
     }
@@ -542,7 +544,8 @@ export default function Ballspage() {
                   });
                 }}
               >
-                start collinding
+                {variables.startcollinding ? "Stop " : "Start "}
+                collinding
               </div>
             </div>
             <div
@@ -618,9 +621,9 @@ export default function Ballspage() {
                 type="range"
                 value={variables.maxSpeed}
                 className="slider"
-                step={0.1}
+                step={0.3}
                 min={0.1}
-                max={3}
+                max={6}
                 onChange={(e) => {
                   setVariables((prev) => {
                     return { ...prev, maxSpeed: parseFloat(e.target.value) };
@@ -630,7 +633,37 @@ export default function Ballspage() {
                 }}
               />
               <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
-                3
+                6
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
+                Coefficient of Restitution :{" "}
+                {variables.coefficientOfRestitution}
+              </div>
+              <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
+                0.1
+              </div>
+              <input
+                type="range"
+                value={variables.coefficientOfRestitution}
+                className="slider"
+                step={0.1}
+                min={0.1}
+                max={1}
+                onChange={(e) => {
+                  setVariables((prev) => {
+                    return {
+                      ...prev,
+                      coefficientOfRestitution: parseFloat(e.target.value),
+                    };
+                  });
+                  // loose focus
+                  e.target.blur();
+                }}
+              />
+              <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
+                1
               </div>
             </div>
           </div>
