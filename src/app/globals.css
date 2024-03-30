@@ -59,3 +59,47 @@ html {
     background-position: -100% 0;
   }
 }
+.slider {
+  appearance: none;
+  border-radius: 8px;
+  height: 1rem;
+  width: 50%;
+  /* height: 12px;
+  left: -12px; */
+  pointer-events: none;
+  /* position: absolute;
+  width: calc(100% + 24px); */
+}
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  background-color: #fff;
+  border: 2px solid #cecece;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2), inset 0 0 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  height: 2.5rem;
+  width: 2.5rem;
+  pointer-events: all;
+}
+.slider::-moz-range-thumb {
+  /* background-color: #fff;
+  border: 2px solid #cecece;
+  border-radius: 50%; */
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2), inset 0 0 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  height: 2rem;
+  pointer-events: all;
+  width: 2rem;
+}
+.slider::-webkit-slider-thumb:hover {
+  background: #f7f7f7;
+}
+.slider::-moz-range-thumb:hover {
+  background: #f7f7f7;
+}
+.slider::-webkit-slider-thumb:active {
+  box-shadow: 0 0 8px #22aa96;
+}
+.slider::-moz-range-thumb:active {
+  box-shadow: 0 0 8px #22aa96;
+}
