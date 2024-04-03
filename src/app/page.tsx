@@ -75,7 +75,7 @@ export default function Home() {
           onMouseEnter={() => setGame("Snake Game")}
           onMouseLeave={() => setGame("")}
         >
-          <Icon path={snake.path} view={snake.viewBox} />
+          <Icon path={snake.path} view={snake.viewBox} url="/snake" />
         </div>
       </div>
     </main>
