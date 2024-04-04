@@ -64,32 +64,28 @@ export default function Snakepage() {
         switch (part.nextdir) {
           case "up":
             part.y -= 10;
-            if (idx < arr.length - 1) {
-              arr[idx + 1].nextdir = "up";
-            }
+
             break;
           case "down":
             part.y += 10;
-            if (idx < arr.length - 1) {
-              arr[idx + 1].nextdir = "down";
-            }
+
             break;
           case "left":
             part.x -= 10;
-            if (idx < arr.length - 1) {
-              arr[idx + 1].nextdir = "left";
-            }
+
             break;
           case "right":
             part.x += 10;
-            if (idx < arr.length - 1) {
-              arr[idx + 1].nextdir = "right";
-            }
             break;
         }
+
         ctx.fillRect(part.x, part.y, 10, 10);
       });
-      //   requestAnimationFrame(() => animate(ctx, canva, snake));
+      snake.forEach((part2, idx2, arr2) => {
+        if (idx2 != 0) {
+          arr2[idx2 - 1].nextdir = part2.nextdir;
+        }
+      });
     }
     const movesnake = setInterval(() => {
       if (ctx && canva && snake) animate(ctx!, canva!, snake);
@@ -99,32 +95,33 @@ export default function Snakepage() {
     };
   }, [canva, snake, ctx]);
   useEffect(() => {
-    document.addEventListener("keydown", (e) => {
+    const keyevent = (e: KeyboardEvent) => {
       const key = e.key;
       switch (key) {
         case "ArrowUp":
-          snake.forEach((part) => {
-            part.nextdir = "up";
-          });
+          if (snake[snake.length - 1].nextdir == "down") return;
+
+          snake[snake.length - 1].nextdir = "up";
           break;
         case "ArrowDown":
-          snake.forEach((part) => {
-            part.nextdir = "down";
-          });
+          if (snake[snake.length - 1].nextdir == "up") return;
+          snake[snake.length - 1].nextdir = "down";
           break;
         case "ArrowLeft":
-          snake.forEach((part) => {
-            part.nextdir = "left";
-          });
+          if (snake[snake.length - 1].nextdir == "right") return;
+          snake[snake.length - 1].nextdir = "left";
           break;
         case "ArrowRight":
-          snake.forEach((part) => {
-            part.nextdir = "right";
-          });
+          if (snake[snake.length - 1].nextdir == "left") return;
+          snake[snake.length - 1].nextdir = "right";
           break;
       }
-    });
-  }, []);
+    };
+    document.addEventListener("keydown", keyevent);
+    return () => {
+      document.removeEventListener("keydown", keyevent);
+    };
+  }, [snake]);
 
   return (
     <main className="h-screen flex flex-col items-center justify-around relative">
