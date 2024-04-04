@@ -3,7 +3,10 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Svg from "../assets/Svg";
 import { chevronBack } from "../helpers/svgs";
-import { getrandomsnakefood } from "../helpers/functions";
+import {
+  getrandomcolorforsnake,
+  getrandomsnakefood,
+} from "../helpers/functions";
 interface SnakePart {
   x: number;
   y: number;
@@ -16,11 +19,11 @@ export default function Snakepage() {
   const box = React.useRef<HTMLDivElement>(null);
   const playinterval = React.useRef<NodeJS.Timeout | null>(null);
   const [vars, setVars] = useState({
-    speed: 100,
+    speed: 50,
     wormsize: 20,
     canvaswidth: 500,
     canvasheight: 500,
-    gamestatus: "playing" as "playing" | "gameover",
+    gamestatus: "playing" as "playing" | "gameover" | "paused",
   });
 
   const snake = React.useRef<SnakePart[]>([
@@ -28,33 +31,25 @@ export default function Snakepage() {
       x: 0,
       y: 0,
       nextdir: "right",
-      color: `rgb(${Math.random() * 255},${Math.random() * 255},${
-        Math.random() * 255
-      })`,
+      color: getrandomcolorforsnake(),
     },
     {
       x: vars.wormsize,
       y: 0,
       nextdir: "right",
-      color: `rgb(${Math.random() * 255},${Math.random() * 255},${
-        Math.random() * 255
-      })`,
+      color: getrandomcolorforsnake(),
     },
     {
       x: vars.wormsize * 2,
       y: 0,
       nextdir: "right",
-      color: `rgb(${Math.random() * 255},${Math.random() * 255},${
-        Math.random() * 255
-      })`,
+      color: getrandomcolorforsnake(),
     },
     {
       x: vars.wormsize * 3,
       y: 0,
       nextdir: "right",
-      color: `rgb(${Math.random() * 255},${Math.random() * 255},${
-        Math.random() * 255
-      })`,
+      color: getrandomcolorforsnake(),
     },
   ]);
   const foodlocation = React.useRef<{ x: number; y: number }>(
@@ -125,7 +120,7 @@ export default function Snakepage() {
     }
 
     function animate(ctx: CanvasRenderingContext2D, canva: HTMLCanvasElement) {
-      if (vars.gamestatus == "gameover") return;
+      if (vars.gamestatus !== "playing") return;
       ctx.clearRect(0, 0, canva.width, canva.height);
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canva.width, canva.height);
@@ -157,6 +152,7 @@ export default function Snakepage() {
         vars.wormsize,
         vars.wormsize
       );
+
       if (
         snake.current[snake.current.length - 1].x == foodlocation.current.x &&
         snake.current[snake.current.length - 1].y == foodlocation.current.y
@@ -167,9 +163,7 @@ export default function Snakepage() {
               x: snake.current[0].x,
               y: snake.current[0].y + vars.wormsize,
               nextdir: "up",
-              color: `rgb(${Math.random() * 255},${Math.random() * 255},${
-                Math.random() * 255
-              })`,
+              color: getrandomcolorforsnake(),
             });
             break;
           case "down":
@@ -177,9 +171,7 @@ export default function Snakepage() {
               x: snake.current[0].x,
               y: snake.current[0].y - vars.wormsize,
               nextdir: "down",
-              color: `rgb(${Math.random() * 255},${Math.random() * 255},${
-                Math.random() * 255
-              })`,
+              color: getrandomcolorforsnake(),
             });
             break;
           case "left":
@@ -187,9 +179,7 @@ export default function Snakepage() {
               x: snake.current[0].x + vars.wormsize,
               y: snake.current[0].y,
               nextdir: "left",
-              color: `rgb(${Math.random() * 255},${Math.random() * 255},${
-                Math.random() * 255
-              })`,
+              color: getrandomcolorforsnake(),
             });
             break;
           case "right":
@@ -197,9 +187,7 @@ export default function Snakepage() {
               x: snake.current[0].x - vars.wormsize,
               y: snake.current[0].y,
               nextdir: "right",
-              color: `rgb(${Math.random() * 255},${Math.random() * 255},${
-                Math.random() * 255
-              })`,
+              color: getrandomcolorforsnake(),
             });
             break;
         }
@@ -332,6 +320,89 @@ export default function Snakepage() {
           <div className="flex flex-col gap-8">
             <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800 p-4 mx-auto">
               Variables
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
+                speed : {vars.speed}
+              </div>
+              <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
+                200
+              </div>
+              <input
+                type="range"
+                value={vars.speed}
+                className="slider"
+                step={100}
+                min={200}
+                max={1500}
+                onChange={(e) => {
+                  setVars((prev) => {
+                    return {
+                      ...prev,
+                      speed: parseInt(e.target.value),
+                      gamestatus: "paused",
+                    };
+                  });
+                  // loose focus
+                  e.target.blur();
+                }}
+              />
+              <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
+                1500
+              </div>
+            </div>
+            <div className="flex items-center gap-4 mx-auto">
+              <div
+                className="text-pink-50 text-2xl bg-green-700 p-4 rounded-md cursor-pointer hover:bg-green-800 "
+                onClick={() => {
+                  setVars({ ...vars, gamestatus: "playing" });
+                  snake.current = [
+                    {
+                      x: 0,
+                      y: 0,
+                      nextdir: "right",
+                      color: getrandomcolorforsnake(),
+                    },
+                    {
+                      x: vars.wormsize,
+                      y: 0,
+                      nextdir: "right",
+                      color: getrandomcolorforsnake(),
+                    },
+                    {
+                      x: vars.wormsize * 2,
+                      y: 0,
+                      nextdir: "right",
+                      color: getrandomcolorforsnake(),
+                    },
+                    {
+                      x: vars.wormsize * 3,
+                      y: 0,
+                      nextdir: "right",
+                      color: getrandomcolorforsnake(),
+                    },
+                  ];
+                  foodlocation.current = getrandomsnakefood(
+                    snake.current.map((part) => ({ x: part.x, y: part.y })),
+                    vars
+                  );
+                }}
+              >
+                Restart
+              </div>
+              <div
+                className="text-pink-50 text-2xl bg-green-700 p-4 rounded-md cursor-pointer hover:bg-green-800 "
+                onClick={() => {
+                  if (vars.gamestatus !== "gameover")
+                    setVars({
+                      ...vars,
+                      gamestatus:
+                        vars.gamestatus == "paused" ? "playing" : "paused",
+                    });
+                }}
+              >
+                {vars.gamestatus == "paused" ? "Resume" : "Pause"}
+              </div>
             </div>
           </div>
         </div>

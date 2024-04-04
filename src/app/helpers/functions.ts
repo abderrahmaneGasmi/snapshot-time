@@ -21,3 +21,7 @@ export const getrandomsnakefood = (
   }
   return { x, y };
 };
+export const getrandomcolorforsnake = () => {
+  return "#1fa67e";
+  // return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+};
