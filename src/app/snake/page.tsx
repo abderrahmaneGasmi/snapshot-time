@@ -321,7 +321,16 @@ export default function Snakepage() {
         >
           <div className="flex flex-col items-center gap-4 justify-self-end ">
             <div className="text-pink-50 text-7xl "> Snake Game</div>
-            <div ref={box} className=" border-2 rounded-md border-gray-50  ">
+            <div
+              ref={box}
+              className={`rounded-md relative
+            ${
+              vars.gamestatus === "gameover"
+                ? "border-8 border-red-500"
+                : "border-2 border-gray-50 "
+            }
+            `}
+            >
               {!canva && (
                 <div
                   className="flex items-center justify-center skeltoneffect"
@@ -330,6 +339,21 @@ export default function Snakepage() {
                     height: "500px",
                   }}
                 ></div>
+              )}
+              {vars.gamestatus === "gameover" && (
+                <div className="absolute inset-0 glassmorph">
+                  <div
+                    className="absolute text-7xl text-pink-50 p-5 bg-blue-500 
+              "
+                    style={{
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%,-50%)",
+                    }}
+                  >
+                    You Lost
+                  </div>
+                </div>
               )}
             </div>
           </div>

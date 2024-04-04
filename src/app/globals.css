@@ -103,3 +103,16 @@ html {
 .slider::-moz-range-thumb:active {
   box-shadow: 0 0 8px #22aa96;
 }
+.glassmorph {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.073) 0%,
+    rgba(0, 0, 0, 0.093) 100%
+  );
+
+  overflow: hidden;
+  z-index: 1;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  user-select: none;
+}
