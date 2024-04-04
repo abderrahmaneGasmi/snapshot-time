@@ -12,11 +12,15 @@ export default function Snakepage() {
   const [canva, setcanva] = useState<HTMLCanvasElement | null>(null);
   const [ctx, setctx] = useState<CanvasRenderingContext2D | null>(null);
   const box = React.useRef<HTMLDivElement>(null);
+  const [vars, setVars] = useState({
+    speed: 100,
+    wormsize: 20,
+  });
   const [snake, setsnake] = useState<SnakePart[]>([
     { x: 0, y: 0, nextdir: "right" },
-    { x: 10, y: 0, nextdir: "right" },
-    { x: 20, y: 0, nextdir: "right" },
-    { x: 30, y: 0, nextdir: "right" },
+    { x: vars.wormsize, y: 0, nextdir: "right" },
+    { x: vars.wormsize * 2, y: 0, nextdir: "right" },
+    { x: vars.wormsize * 3, y: 0, nextdir: "right" },
   ]);
   useEffect(() => {
     if (box.current) {
@@ -43,7 +47,7 @@ export default function Snakepage() {
 
           snake.forEach((part) => {
             ctx.fillStyle = "green";
-            ctx.fillRect(part.x, part.y, 10, 10);
+            ctx.fillRect(part.x, part.y, vars.wormsize, vars.wormsize);
           });
           // setctx(ctx);
           // animate(ctx, canvas, snake);
@@ -63,23 +67,23 @@ export default function Snakepage() {
         ctx.fillStyle = "green";
         switch (part.nextdir) {
           case "up":
-            part.y -= 10;
+            part.y -= vars.wormsize;
 
             break;
           case "down":
-            part.y += 10;
+            part.y += vars.wormsize;
 
             break;
           case "left":
-            part.x -= 10;
+            part.x -= vars.wormsize;
 
             break;
           case "right":
-            part.x += 10;
+            part.x += vars.wormsize;
             break;
         }
 
-        ctx.fillRect(part.x, part.y, 10, 10);
+        ctx.fillRect(part.x, part.y, vars.wormsize, vars.wormsize);
       });
       snake.forEach((part2, idx2, arr2) => {
         if (idx2 != 0) {
@@ -89,11 +93,11 @@ export default function Snakepage() {
     }
     const movesnake = setInterval(() => {
       if (ctx && canva && snake) animate(ctx!, canva!, snake);
-    }, 1000);
+    }, vars.speed);
     return () => {
       clearInterval(movesnake);
     };
-  }, [canva, snake, ctx]);
+  }, [canva, snake, ctx, vars]);
   useEffect(() => {
     const keyevent = (e: KeyboardEvent) => {
       const key = e.key;
