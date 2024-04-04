@@ -294,7 +294,42 @@ export default function Snakepage() {
       document.removeEventListener("keydown", keyevent);
     };
   }, [snake, vars.gamestatus]);
-
+  const restartgame = () => {
+    snake.current = [
+      {
+        x: 0,
+        y: 0,
+        nextdir: "right",
+        color: getrandomcolorforsnake(),
+        refreshed: false,
+      },
+      {
+        x: vars.wormsize,
+        y: 0,
+        nextdir: "right",
+        color: getrandomcolorforsnake(),
+        refreshed: false,
+      },
+      {
+        x: vars.wormsize * 2,
+        y: 0,
+        nextdir: "right",
+        color: getrandomcolorforsnake(),
+        refreshed: false,
+      },
+      {
+        x: vars.wormsize * 3,
+        y: 0,
+        nextdir: "right",
+        color: getrandomcolorforsnake(),
+        refreshed: false,
+      },
+    ];
+    foodlocation.current = getrandomsnakefood(
+      snake.current.map((part) => ({ x: part.x, y: part.y })),
+      vars
+    );
+  };
   return (
     <main className="h-screen flex flex-col items-center justify-around relative">
       <Link
@@ -391,45 +426,43 @@ export default function Snakepage() {
                 10
               </div>
             </div>
+            <div className="flex items-center gap-4">
+              <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
+                size : {vars.wormsize}
+              </div>
+              <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
+                10
+              </div>
+              <input
+                type="range"
+                value={vars.wormsize}
+                className="slider"
+                step={10}
+                min={10}
+                max={50}
+                onChange={(e) => {
+                  setVars((prev) => {
+                    return {
+                      ...prev,
+                      wormsize: parseInt(e.target.value),
+                      gamestatus: "gameover",
+                    };
+                  });
+                  restartgame();
+                  // loose focus
+                  e.target.blur();
+                }}
+              />
+              <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
+                50
+              </div>
+            </div>
             <div className="flex items-center gap-4 mx-auto">
               <div
                 className="text-pink-50 text-2xl bg-green-700 p-4 rounded-md cursor-pointer hover:bg-green-800 "
                 onClick={() => {
                   setVars({ ...vars, gamestatus: "playing" });
-                  snake.current = [
-                    {
-                      x: 0,
-                      y: 0,
-                      nextdir: "right",
-                      color: getrandomcolorforsnake(),
-                      refreshed: false,
-                    },
-                    {
-                      x: vars.wormsize,
-                      y: 0,
-                      nextdir: "right",
-                      color: getrandomcolorforsnake(),
-                      refreshed: false,
-                    },
-                    {
-                      x: vars.wormsize * 2,
-                      y: 0,
-                      nextdir: "right",
-                      color: getrandomcolorforsnake(),
-                      refreshed: false,
-                    },
-                    {
-                      x: vars.wormsize * 3,
-                      y: 0,
-                      nextdir: "right",
-                      color: getrandomcolorforsnake(),
-                      refreshed: false,
-                    },
-                  ];
-                  foodlocation.current = getrandomsnakefood(
-                    snake.current.map((part) => ({ x: part.x, y: part.y })),
-                    vars
-                  );
+                  restartgame();
                 }}
               >
                 Restart
