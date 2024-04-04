@@ -12,17 +12,25 @@ export default function Snakepage() {
   const [canva, setcanva] = useState<HTMLCanvasElement | null>(null);
   const [ctx, setctx] = useState<CanvasRenderingContext2D | null>(null);
   const box = React.useRef<HTMLDivElement>(null);
+  const playinterval = React.useRef<NodeJS.Timeout | null>(null);
   const [vars, setVars] = useState({
     speed: 100,
     wormsize: 20,
+    canvaswidth: 500,
+    canvasheight: 500,
+    gamestatus: "playing" as "playing" | "gameover",
   });
-  const [snake, setsnake] = useState<SnakePart[]>([
+  const snake = React.useRef<SnakePart[]>([
     { x: 0, y: 0, nextdir: "right" },
     { x: vars.wormsize, y: 0, nextdir: "right" },
     { x: vars.wormsize * 2, y: 0, nextdir: "right" },
     { x: vars.wormsize * 3, y: 0, nextdir: "right" },
   ]);
   useEffect(() => {
+    if (vars.gamestatus == "gameover") {
+      clearInterval(playinterval.current!);
+      return;
+    }
     if (box.current) {
       // check if the box is already has a canvas
 
@@ -31,8 +39,8 @@ export default function Snakepage() {
       }
       if (!canva) {
         const canvas = document.createElement("canvas");
-        canvas.width = 500;
-        canvas.height = 500;
+        canvas.width = vars.canvaswidth;
+        canvas.height = vars.canvasheight;
         setcanva(canvas);
       } else {
         box.current.appendChild(canva);
@@ -45,7 +53,7 @@ export default function Snakepage() {
           ctx.fillStyle = "black";
           ctx.fillRect(0, 0, canva.width, canva.height);
 
-          snake.forEach((part) => {
+          snake.current.forEach((part) => {
             ctx.fillStyle = "green";
             ctx.fillRect(part.x, part.y, vars.wormsize, vars.wormsize);
           });
@@ -55,69 +63,86 @@ export default function Snakepage() {
       }
     }
 
-    function animate(
-      ctx: CanvasRenderingContext2D,
-      canva: HTMLCanvasElement,
-      snake: SnakePart[]
-    ) {
+    function animate(ctx: CanvasRenderingContext2D, canva: HTMLCanvasElement) {
+      if (vars.gamestatus == "gameover") return;
       ctx.clearRect(0, 0, canva.width, canva.height);
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canva.width, canva.height);
-      snake.forEach((part, idx, arr) => {
+      let stop = false;
+      for (let i = snake.current.length - 1; i > -1; i--) {
+        const part = snake.current[i];
         ctx.fillStyle = "green";
-        switch (part.nextdir) {
-          case "up":
-            part.y -= vars.wormsize;
+        if (!stop)
+          switch (part.nextdir) {
+            case "up":
+              if (part.y - vars.wormsize < 0) {
+                setVars({ ...vars, gamestatus: "gameover" });
+                stop = true;
+              } else part.y -= vars.wormsize;
+              break;
+            case "down":
+              if (part.y + vars.wormsize > vars.canvasheight - vars.wormsize) {
+                setVars({ ...vars, gamestatus: "gameover" });
+                stop = true;
+              } else part.y += vars.wormsize;
 
-            break;
-          case "down":
-            part.y += vars.wormsize;
+              break;
+            case "left":
+              if (part.x - vars.wormsize < 0) {
+                setVars({ ...vars, gamestatus: "gameover" });
+                stop = true;
+              } else part.x -= vars.wormsize;
 
-            break;
-          case "left":
-            part.x -= vars.wormsize;
+              break;
+            case "right":
+              if (part.x + vars.wormsize > vars.canvaswidth - vars.wormsize) {
+                setVars({ ...vars, gamestatus: "gameover" });
+                stop = true;
+              } else part.x += vars.wormsize;
 
-            break;
-          case "right":
-            part.x += vars.wormsize;
-            break;
-        }
-
+              break;
+          }
         ctx.fillRect(part.x, part.y, vars.wormsize, vars.wormsize);
-      });
-      snake.forEach((part2, idx2, arr2) => {
-        if (idx2 != 0) {
-          arr2[idx2 - 1].nextdir = part2.nextdir;
-        }
-      });
+      }
+
+      if (!stop)
+        snake.current.forEach((part2, idx2, arr2) => {
+          if (idx2 != 0) {
+            arr2[idx2 - 1].nextdir = part2.nextdir;
+          }
+        });
     }
-    const movesnake = setInterval(() => {
-      if (ctx && canva && snake) animate(ctx!, canva!, snake);
+    playinterval.current = setInterval(() => {
+      if (ctx && canva && snake && vars.gamestatus !== "gameover")
+        animate(ctx!, canva!);
     }, vars.speed);
     return () => {
-      clearInterval(movesnake);
+      if (playinterval.current) clearInterval(playinterval.current);
     };
   }, [canva, snake, ctx, vars]);
+
   useEffect(() => {
     const keyevent = (e: KeyboardEvent) => {
+      if (vars.gamestatus == "gameover") return;
       const key = e.key;
       switch (key) {
         case "ArrowUp":
-          if (snake[snake.length - 1].nextdir == "down") return;
+          if (snake.current[snake.current.length - 1].nextdir == "down") return;
 
-          snake[snake.length - 1].nextdir = "up";
+          snake.current[snake.current.length - 1].nextdir = "up";
           break;
         case "ArrowDown":
-          if (snake[snake.length - 1].nextdir == "up") return;
-          snake[snake.length - 1].nextdir = "down";
+          if (snake.current[snake.current.length - 1].nextdir == "up") return;
+          snake.current[snake.current.length - 1].nextdir = "down";
           break;
         case "ArrowLeft":
-          if (snake[snake.length - 1].nextdir == "right") return;
-          snake[snake.length - 1].nextdir = "left";
+          if (snake.current[snake.current.length - 1].nextdir == "right")
+            return;
+          snake.current[snake.current.length - 1].nextdir = "left";
           break;
         case "ArrowRight":
-          if (snake[snake.length - 1].nextdir == "left") return;
-          snake[snake.length - 1].nextdir = "right";
+          if (snake.current[snake.current.length - 1].nextdir == "left") return;
+          snake.current[snake.current.length - 1].nextdir = "right";
           break;
       }
     };
@@ -125,7 +150,7 @@ export default function Snakepage() {
     return () => {
       document.removeEventListener("keydown", keyevent);
     };
-  }, [snake]);
+  }, [snake, vars.gamestatus]);
 
   return (
     <main className="h-screen flex flex-col items-center justify-around relative">
