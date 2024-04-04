@@ -273,7 +273,6 @@ export default function Ballspage() {
       }[]
     ) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      console.log(variables.maxSpeed);
       variables.objects.forEach((object) => {
         const shape = shapes.find((shape) => shape.name === object.shape);
         if (shape) {
