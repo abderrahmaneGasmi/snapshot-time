@@ -85,12 +85,52 @@ export default function Snakepage() {
       ctx.fillRect(0, 0, canva.width, canva.height);
       let stop = false;
       ctx.fillStyle = "red";
+
       ctx.fillRect(
         foodlocation.current.x,
         foodlocation.current.y,
         vars.wormsize,
         vars.wormsize
       );
+      if (
+        snake.current[snake.current.length - 1].x == foodlocation.current.x &&
+        snake.current[snake.current.length - 1].y == foodlocation.current.y
+      ) {
+        switch (snake.current[0].nextdir) {
+          case "up":
+            snake.current.unshift({
+              x: snake.current[0].x,
+              y: snake.current[0].y + vars.wormsize,
+              nextdir: "up",
+            });
+            break;
+          case "down":
+            snake.current.unshift({
+              x: snake.current[0].x,
+              y: snake.current[0].y - vars.wormsize,
+              nextdir: "down",
+            });
+            break;
+          case "left":
+            snake.current.unshift({
+              x: snake.current[0].x + vars.wormsize,
+              y: snake.current[0].y,
+              nextdir: "left",
+            });
+            break;
+          case "right":
+            snake.current.unshift({
+              x: snake.current[0].x - vars.wormsize,
+              y: snake.current[0].y,
+              nextdir: "right",
+            });
+            break;
+        }
+        foodlocation.current = getrandomsnakefood(
+          snake.current.map((part) => ({ x: part.x, y: part.y })),
+          vars
+        );
+      }
       for (let i = snake.current.length - 1; i > -1; i--) {
         const part = snake.current[i];
         ctx.fillStyle = "green";
