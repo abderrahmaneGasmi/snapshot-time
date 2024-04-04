@@ -8,6 +8,7 @@ interface SnakePart {
   x: number;
   y: number;
   nextdir: "up" | "down" | "left" | "right";
+  color: string;
 }
 export default function Snakepage() {
   const [canva, setcanva] = useState<HTMLCanvasElement | null>(null);
@@ -23,10 +24,38 @@ export default function Snakepage() {
   });
 
   const snake = React.useRef<SnakePart[]>([
-    { x: 0, y: 0, nextdir: "right" },
-    { x: vars.wormsize, y: 0, nextdir: "right" },
-    { x: vars.wormsize * 2, y: 0, nextdir: "right" },
-    { x: vars.wormsize * 3, y: 0, nextdir: "right" },
+    {
+      x: 0,
+      y: 0,
+      nextdir: "right",
+      color: `rgb(${Math.random() * 255},${Math.random() * 255},${
+        Math.random() * 255
+      })`,
+    },
+    {
+      x: vars.wormsize,
+      y: 0,
+      nextdir: "right",
+      color: `rgb(${Math.random() * 255},${Math.random() * 255},${
+        Math.random() * 255
+      })`,
+    },
+    {
+      x: vars.wormsize * 2,
+      y: 0,
+      nextdir: "right",
+      color: `rgb(${Math.random() * 255},${Math.random() * 255},${
+        Math.random() * 255
+      })`,
+    },
+    {
+      x: vars.wormsize * 3,
+      y: 0,
+      nextdir: "right",
+      color: `rgb(${Math.random() * 255},${Math.random() * 255},${
+        Math.random() * 255
+      })`,
+    },
   ]);
   const foodlocation = React.useRef<{ x: number; y: number }>(
     getrandomsnakefood(
@@ -62,7 +91,7 @@ export default function Snakepage() {
           ctx.fillRect(0, 0, canva.width, canva.height);
 
           snake.current.forEach((part) => {
-            ctx.fillStyle = "green";
+            ctx.fillStyle = part.color;
             ctx.fillRect(part.x, part.y, vars.wormsize, vars.wormsize);
           });
           ctx.fillStyle = "red";
@@ -72,6 +101,23 @@ export default function Snakepage() {
             vars.wormsize,
             vars.wormsize
           );
+          ctx.strokeStyle = "rgba(0, 0, 0, 0.5)"; // Adjust the color and opacity as needed
+
+          // Draw vertical grid lines
+          for (let x = 0; x <= canva.width; x += vars.wormsize) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canva.height);
+            ctx.stroke();
+          }
+
+          // Draw horizontal grid lines
+          for (let y = 0; y <= canva.height; y += vars.wormsize) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(canva.width, y);
+            ctx.stroke();
+          }
           // setctx(ctx);
           // animate(ctx, canvas, snake);
         }
@@ -83,6 +129,25 @@ export default function Snakepage() {
       ctx.clearRect(0, 0, canva.width, canva.height);
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canva.width, canva.height);
+
+      ctx.strokeStyle = "rgba(20, 150, 15, 1)"; // Adjust the color and opacity as needed
+
+      // Draw vertical grid lines
+      for (let x = 0; x <= canva.width; x += vars.wormsize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canva.height);
+        ctx.stroke();
+      }
+
+      // Draw horizontal grid lines
+      for (let y = 0; y <= canva.height; y += vars.wormsize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canva.width, y);
+        ctx.stroke();
+      }
+
       let stop = false;
       ctx.fillStyle = "red";
 
@@ -102,6 +167,9 @@ export default function Snakepage() {
               x: snake.current[0].x,
               y: snake.current[0].y + vars.wormsize,
               nextdir: "up",
+              color: `rgb(${Math.random() * 255},${Math.random() * 255},${
+                Math.random() * 255
+              })`,
             });
             break;
           case "down":
@@ -109,6 +177,9 @@ export default function Snakepage() {
               x: snake.current[0].x,
               y: snake.current[0].y - vars.wormsize,
               nextdir: "down",
+              color: `rgb(${Math.random() * 255},${Math.random() * 255},${
+                Math.random() * 255
+              })`,
             });
             break;
           case "left":
@@ -116,6 +187,9 @@ export default function Snakepage() {
               x: snake.current[0].x + vars.wormsize,
               y: snake.current[0].y,
               nextdir: "left",
+              color: `rgb(${Math.random() * 255},${Math.random() * 255},${
+                Math.random() * 255
+              })`,
             });
             break;
           case "right":
@@ -123,6 +197,9 @@ export default function Snakepage() {
               x: snake.current[0].x - vars.wormsize,
               y: snake.current[0].y,
               nextdir: "right",
+              color: `rgb(${Math.random() * 255},${Math.random() * 255},${
+                Math.random() * 255
+              })`,
             });
             break;
         }
@@ -133,7 +210,7 @@ export default function Snakepage() {
       }
       for (let i = snake.current.length - 1; i > -1; i--) {
         const part = snake.current[i];
-        ctx.fillStyle = "green";
+        ctx.fillStyle = part.color;
         if (!stop)
           switch (part.nextdir) {
             case "up":
