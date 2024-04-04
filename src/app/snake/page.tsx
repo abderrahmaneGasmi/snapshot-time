@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Svg from "../assets/Svg";
 import { chevronBack } from "../helpers/svgs";
 import {
+  calculateDelay,
   getrandomcolorforsnake,
   getrandomsnakefood,
 } from "../helpers/functions";
@@ -12,6 +13,7 @@ interface SnakePart {
   y: number;
   nextdir: "up" | "down" | "left" | "right";
   color: string;
+  refreshed: boolean;
 }
 export default function Snakepage() {
   const [canva, setcanva] = useState<HTMLCanvasElement | null>(null);
@@ -19,7 +21,7 @@ export default function Snakepage() {
   const box = React.useRef<HTMLDivElement>(null);
   const playinterval = React.useRef<NodeJS.Timeout | null>(null);
   const [vars, setVars] = useState({
-    speed: 50,
+    speed: 6,
     wormsize: 20,
     canvaswidth: 500,
     canvasheight: 500,
@@ -32,24 +34,28 @@ export default function Snakepage() {
       y: 0,
       nextdir: "right",
       color: getrandomcolorforsnake(),
+      refreshed: false,
     },
     {
       x: vars.wormsize,
       y: 0,
       nextdir: "right",
       color: getrandomcolorforsnake(),
+      refreshed: false,
     },
     {
       x: vars.wormsize * 2,
       y: 0,
       nextdir: "right",
       color: getrandomcolorforsnake(),
+      refreshed: false,
     },
     {
       x: vars.wormsize * 3,
       y: 0,
       nextdir: "right",
       color: getrandomcolorforsnake(),
+      refreshed: false,
     },
   ]);
   const foodlocation = React.useRef<{ x: number; y: number }>(
@@ -164,6 +170,7 @@ export default function Snakepage() {
               y: snake.current[0].y + vars.wormsize,
               nextdir: "up",
               color: getrandomcolorforsnake(),
+              refreshed: true,
             });
             break;
           case "down":
@@ -172,6 +179,7 @@ export default function Snakepage() {
               y: snake.current[0].y - vars.wormsize,
               nextdir: "down",
               color: getrandomcolorforsnake(),
+              refreshed: true,
             });
             break;
           case "left":
@@ -180,6 +188,7 @@ export default function Snakepage() {
               y: snake.current[0].y,
               nextdir: "left",
               color: getrandomcolorforsnake(),
+              refreshed: true,
             });
             break;
           case "right":
@@ -188,6 +197,7 @@ export default function Snakepage() {
               y: snake.current[0].y,
               nextdir: "right",
               color: getrandomcolorforsnake(),
+              refreshed: true,
             });
             break;
         }
@@ -229,6 +239,7 @@ export default function Snakepage() {
 
               break;
           }
+        snake.current[i].refreshed = true;
         ctx.fillRect(part.x, part.y, vars.wormsize, vars.wormsize);
       }
 
@@ -242,7 +253,7 @@ export default function Snakepage() {
     playinterval.current = setInterval(() => {
       if (ctx && canva && snake && vars.gamestatus !== "gameover")
         animate(ctx!, canva!);
-    }, vars.speed);
+    }, calculateDelay(vars.speed));
     return () => {
       if (playinterval.current) clearInterval(playinterval.current);
     };
@@ -251,25 +262,30 @@ export default function Snakepage() {
   useEffect(() => {
     const keyevent = (e: KeyboardEvent) => {
       if (vars.gamestatus == "gameover") return;
+      if (!snake.current[snake.current.length - 1].refreshed) return;
       const key = e.key;
       switch (key) {
         case "ArrowUp":
           if (snake.current[snake.current.length - 1].nextdir == "down") return;
 
           snake.current[snake.current.length - 1].nextdir = "up";
+          snake.current[snake.current.length - 1].refreshed = false;
           break;
         case "ArrowDown":
           if (snake.current[snake.current.length - 1].nextdir == "up") return;
           snake.current[snake.current.length - 1].nextdir = "down";
+          snake.current[snake.current.length - 1].refreshed = false;
           break;
         case "ArrowLeft":
           if (snake.current[snake.current.length - 1].nextdir == "right")
             return;
           snake.current[snake.current.length - 1].nextdir = "left";
+          snake.current[snake.current.length - 1].refreshed = false;
           break;
         case "ArrowRight":
           if (snake.current[snake.current.length - 1].nextdir == "left") return;
           snake.current[snake.current.length - 1].nextdir = "right";
+          snake.current[snake.current.length - 1].refreshed = false;
           break;
       }
     };
@@ -326,15 +342,15 @@ export default function Snakepage() {
                 speed : {vars.speed}
               </div>
               <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
-                200
+                1
               </div>
               <input
                 type="range"
                 value={vars.speed}
                 className="slider"
-                step={100}
-                min={200}
-                max={1500}
+                step={1}
+                min={1}
+                max={10}
                 onChange={(e) => {
                   setVars((prev) => {
                     return {
@@ -348,7 +364,7 @@ export default function Snakepage() {
                 }}
               />
               <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
-                1500
+                10
               </div>
             </div>
             <div className="flex items-center gap-4 mx-auto">
@@ -362,24 +378,28 @@ export default function Snakepage() {
                       y: 0,
                       nextdir: "right",
                       color: getrandomcolorforsnake(),
+                      refreshed: false,
                     },
                     {
                       x: vars.wormsize,
                       y: 0,
                       nextdir: "right",
                       color: getrandomcolorforsnake(),
+                      refreshed: false,
                     },
                     {
                       x: vars.wormsize * 2,
                       y: 0,
                       nextdir: "right",
                       color: getrandomcolorforsnake(),
+                      refreshed: false,
                     },
                     {
                       x: vars.wormsize * 3,
                       y: 0,
                       nextdir: "right",
                       color: getrandomcolorforsnake(),
+                      refreshed: false,
                     },
                   ];
                   foodlocation.current = getrandomsnakefood(
