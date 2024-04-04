@@ -3,6 +3,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Svg from "../assets/Svg";
 import { chevronBack } from "../helpers/svgs";
+import { getrandomsnakefood } from "../helpers/functions";
 interface SnakePart {
   x: number;
   y: number;
@@ -20,12 +21,19 @@ export default function Snakepage() {
     canvasheight: 500,
     gamestatus: "playing" as "playing" | "gameover",
   });
+
   const snake = React.useRef<SnakePart[]>([
     { x: 0, y: 0, nextdir: "right" },
     { x: vars.wormsize, y: 0, nextdir: "right" },
     { x: vars.wormsize * 2, y: 0, nextdir: "right" },
     { x: vars.wormsize * 3, y: 0, nextdir: "right" },
   ]);
+  const foodlocation = React.useRef<{ x: number; y: number }>(
+    getrandomsnakefood(
+      snake.current.map((part) => ({ x: part.x, y: part.y })),
+      vars
+    )
+  );
   useEffect(() => {
     if (vars.gamestatus == "gameover") {
       clearInterval(playinterval.current!);
@@ -57,6 +65,13 @@ export default function Snakepage() {
             ctx.fillStyle = "green";
             ctx.fillRect(part.x, part.y, vars.wormsize, vars.wormsize);
           });
+          ctx.fillStyle = "red";
+          ctx.fillRect(
+            foodlocation.current.x,
+            foodlocation.current.y,
+            vars.wormsize,
+            vars.wormsize
+          );
           // setctx(ctx);
           // animate(ctx, canvas, snake);
         }
@@ -69,6 +84,13 @@ export default function Snakepage() {
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, canva.width, canva.height);
       let stop = false;
+      ctx.fillStyle = "red";
+      ctx.fillRect(
+        foodlocation.current.x,
+        foodlocation.current.y,
+        vars.wormsize,
+        vars.wormsize
+      );
       for (let i = snake.current.length - 1; i > -1; i--) {
         const part = snake.current[i];
         ctx.fillStyle = "green";
