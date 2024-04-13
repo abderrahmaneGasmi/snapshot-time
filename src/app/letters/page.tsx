@@ -71,25 +71,17 @@ export default function Letterspage() {
     },
   ]);
   const [current, setCurrent] = useState(Letters[5]);
-  const [carousselX, setCarousselX] = useState(0);
 
-  const getcurrentLetteridx = () => {
-    // return the letter that has x = 200;
-    let index = Letters.findIndex((letter) => letter.x === 200);
-    return index;
-  };
   const handleLetter = (letter: { letter: string; x: number; y: number }) => {
-    // setCurrent(letter);
     let index = Letters.indexOf(letter);
     let currentindex = Letters.indexOf(current);
+
     if (index === currentindex) {
       return;
     }
 
-    // let diff = currentindex - index;
-    // setCarousselX((prev) => {
-    //   return prev + diff * 100;
-    // });
+    // check if cliecked left or right based on the index and current index
+
     setCurrent(letter);
 
     let idx = Array.from({ length: Letters.length }, (_, i) => i);
@@ -103,17 +95,21 @@ export default function Letterspage() {
       let carousel = generateCarousel(index, arr.length);
       arr[carousel[0]].x = -100;
       arr[carousel[0]].y = 0;
-      arr[carousel[2]].x = 100;
-      arr[carousel[2]].y = -25;
-      arr[carousel[1]].x = 0;
+      arr[carousel[1]].x = -100;
       arr[carousel[1]].y = 0;
-
-      arr[carousel[3]].x = 300;
+      arr[carousel[3]].x = 100;
       arr[carousel[3]].y = -25;
-      arr[carousel[4]].x = 400;
-      arr[carousel[4]].y = 0;
-      arr[carousel[5]].x = 500;
+      arr[carousel[2]].x = 0;
+      arr[carousel[2]].y = 0;
+
+      arr[carousel[4]].x = 300;
+      arr[carousel[4]].y = -25;
+      arr[carousel[5]].x = 400;
       arr[carousel[5]].y = 0;
+      arr[carousel[6]].x = 500;
+      arr[carousel[6]].y = 0;
+      arr[carousel[7]].x = 500;
+      arr[carousel[7]].y = 0;
       // remove all the indexes that exist in the carousel and idx
       idx = idx.filter((n) => !carousel.includes(n));
 
@@ -134,7 +130,7 @@ export default function Letterspage() {
 
   function generateCarousel(input: number, range: number): number[] {
     const carousel: number[] = [];
-    for (let i = input - 3; i <= input + 3; i++) {
+    for (let i = input - 4; i <= input + 4; i++) {
       const current = ((i % range) + range) % range; // This ensures the number wraps around the range
       if (current !== input) carousel.push(current);
     }
