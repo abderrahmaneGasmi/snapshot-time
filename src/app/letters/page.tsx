@@ -26,14 +26,18 @@ export default function Letterspage() {
       <div className="flex items-center border-2 border-pink-50  p-2">
         <div
           className="text-pink-50 mx-auto "
-          style={{ fontSize: "20rem", lineHeight: "16rem" }}
+          style={{
+            fontSize: "20rem",
+            lineHeight: "16rem",
+            textShadow: "#fff 1px 0 10px",
+          }}
         >
           A
         </div>
       </div>
       <motion.div className="flex gap-12">
         <motion.div
-          className="text-gray-800 text-7xl p-8 bg-gray-500 rounded"
+          className="text-gray-800 text-7xl p-8 bg-gray-700 rounded"
           initial={{
             y: 10,
           }}
@@ -45,6 +49,9 @@ export default function Letterspage() {
           initial={{
             y: -10,
           }}
+          style={{
+            filter: "drop-shadow(0px 1px 1px #ffffff)",
+          }}
         >
           C
         </motion.div>
@@ -52,6 +59,9 @@ export default function Letterspage() {
           className="text-gray-600 text-7xl p-8 bg-white rounded"
           initial={{
             y: -50,
+          }}
+          style={{
+            filter: "drop-shadow(0px 1px 4px #ffffff)",
           }}
         >
           A
@@ -61,11 +71,14 @@ export default function Letterspage() {
           initial={{
             y: -10,
           }}
+          style={{
+            filter: "drop-shadow(0px 1px 1px #ffffff)",
+          }}
         >
           B
         </motion.div>
         <motion.div
-          className="text-gray-800 text-7xl p-8 bg-gray-500 rounded"
+          className="text-gray-800 text-7xl p-8 bg-gray-700 rounded"
           initial={{
             y: 10,
           }}
