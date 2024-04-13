@@ -136,6 +136,37 @@ export default function Letterspage() {
     }
     return carousel;
   }
+  useEffect(() => {
+    const keyevent = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") {
+        let next = Letters.indexOf(current) + 1;
+        if (next === Letters.length) {
+          next = 0;
+        }
+        handleLetter(Letters[next]);
+      }
+      if (e.key === "ArrowLeft") {
+        let next = Letters.indexOf(current) - 1;
+        if (next === -1) {
+          next = Letters.length - 1;
+        }
+        handleLetter(Letters[next]);
+      }
+    };
+    window.addEventListener("keydown", keyevent);
+
+    let interval = setInterval(() => {
+      let next = Letters.indexOf(current) + 1;
+      if (next === Letters.length) {
+        next = 0;
+      }
+      handleLetter(Letters[next]);
+    }, 2500);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("keydown", keyevent);
+    };
+  }, [Letters, current]);
 
   return (
     <main className="h-screen flex flex-col items-center justify-evenly relative select-none">
@@ -184,7 +215,7 @@ export default function Letterspage() {
         {Letters.map((letter, index) => (
           <motion.div
             key={index}
-            className={`text-7xl p-8 rounded cursor-pointer absolute left-0 w-28 ${
+            className={`text-7xl p-8 rounded cursor-pointer absolute left-0 w-32 text-center ${
               letter.y === 0
                 ? "text-gray-800  bg-gray-700"
                 : letter.y === -25
@@ -199,7 +230,9 @@ export default function Letterspage() {
                   ? 0
                   : 1,
             }}
-            onClick={() => handleLetter(letter)}
+            onClick={() => {
+              handleLetter(letter);
+            }}
             initial={{
               x: letter.x,
               y: letter.y,
