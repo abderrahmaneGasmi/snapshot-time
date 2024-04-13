@@ -1,10 +1,48 @@
 "use client";
-import React from "react";
-import { chevronBack } from "../helpers/svgs";
+import React, { useState } from "react";
+import { chevronBack, letters } from "../helpers/svgs";
 import Link from "next/link";
 import Svg from "../assets/Svg";
 import { motion } from "framer-motion";
 export default function Letterspage() {
+  const [Letters, setLetters] = useState([
+    "A",
+    "B",
+
+    "H",
+    "K",
+    "L",
+
+    "Q",
+    "R",
+    "S",
+    "T",
+
+    "W",
+
+    "Y",
+    "Z",
+  ]);
+  const [current, setCurrent] = useState(Letters[Letters.length / 2]);
+
+  const show4letters = () => {
+    let index = Letters.indexOf(current);
+    let arr = [];
+    for (let i = index - 2; i < index + 3; i++) {
+      if (i < 0) {
+        arr.push(Letters[Letters.length + i]);
+      } else if (i >= Letters.length) {
+        arr.push(Letters[i - Letters.length]);
+      } else {
+        arr.push(Letters[i]);
+      }
+    }
+    return arr;
+  };
+
+  const handleLetter = (letter: string) => {
+    setCurrent(letter);
+  };
   return (
     <main className="h-screen flex flex-col items-center justify-evenly relative">
       <Link
@@ -23,7 +61,13 @@ export default function Letterspage() {
       <div className="flex flex-col gap-8 items-center">
         <div className="text-pink-50 text-7xl ">Letters carousel</div>
       </div>
-      <div className="flex items-center border-2 border-pink-50  p-2">
+      <div
+        className="flex items-center border-2 border-pink-50 "
+        style={{
+          width: "20rem",
+          height: "20rem",
+        }}
+      >
         <div
           className="text-pink-50 mx-auto "
           style={{
@@ -32,59 +76,28 @@ export default function Letterspage() {
             textShadow: "#fff 1px 0 10px",
           }}
         >
-          A
+          {current}
         </div>
       </div>
       <motion.div className="flex gap-12">
-        <motion.div
-          className="text-gray-800 text-7xl p-8 bg-gray-700 rounded"
-          initial={{
-            y: 10,
-          }}
-        >
-          Q
-        </motion.div>
-        <motion.div
-          className="text-gray-700 text-7xl p-8 bg-gray-400 rounded"
-          initial={{
-            y: -10,
-          }}
-          style={{
-            filter: "drop-shadow(0px 1px 1px #ffffff)",
-          }}
-        >
-          C
-        </motion.div>
-        <motion.div
-          className="text-gray-600 text-7xl p-8 bg-white rounded"
-          initial={{
-            y: -50,
-          }}
-          style={{
-            filter: "drop-shadow(0px 1px 4px #ffffff)",
-          }}
-        >
-          A
-        </motion.div>
-        <motion.div
-          className="text-gray-700 text-7xl p-8 bg-gray-400 rounded"
-          initial={{
-            y: -10,
-          }}
-          style={{
-            filter: "drop-shadow(0px 1px 1px #ffffff)",
-          }}
-        >
-          B
-        </motion.div>
-        <motion.div
-          className="text-gray-800 text-7xl p-8 bg-gray-700 rounded"
-          initial={{
-            y: 10,
-          }}
-        >
-          D
-        </motion.div>
+        {show4letters().map((letter, index) => (
+          <motion.div
+            key={index}
+            className={`text-7xl p-8 rounded cursor-pointer ${
+              index % 4 === 0
+                ? "text-gray-800  bg-gray-700"
+                : index === 1 || index == 3
+                ? "text-gray-700  bg-gray-400"
+                : "text-gray-600 bg-white "
+            }`}
+            onClick={() => handleLetter(letter)}
+            initial={{
+              y: index % 4 === 0 ? 10 : index === 1 || index == 3 ? -10 : -50,
+            }}
+          >
+            {letter}
+          </motion.div>
+        ))}
       </motion.div>
     </main>
   );
