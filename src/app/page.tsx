@@ -5,6 +5,7 @@ import {
   ball,
   boxes,
   card,
+  letters,
   mine,
   search,
   snake,
@@ -76,6 +77,12 @@ export default function Home() {
           onMouseLeave={() => setGame("")}
         >
           <Icon path={snake.path} view={snake.viewBox} url="/snake" />
+        </div>
+        <div
+          onMouseEnter={() => setGame("Letters Carousel ")}
+          onMouseLeave={() => setGame("")}
+        >
+          <Icon path={letters.path} view={letters.viewBox} url="/letters" />
         </div>
       </div>
     </main>
