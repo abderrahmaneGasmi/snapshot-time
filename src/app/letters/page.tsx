@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { chevronBack, letters } from "../helpers/svgs";
 import Link from "next/link";
 import Svg from "../assets/Svg";
@@ -43,6 +43,30 @@ export default function Letterspage() {
   const handleLetter = (letter: string) => {
     setCurrent(letter);
   };
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") {
+        let index = Letters.indexOf(current);
+        if (index === Letters.length - 1) {
+          setCurrent(Letters[0]);
+        } else {
+          setCurrent(Letters[index + 1]);
+        }
+      } else if (e.key === "ArrowLeft") {
+        let index = Letters.indexOf(current);
+        if (index === 0) {
+          setCurrent(Letters[Letters.length - 1]);
+        } else {
+          setCurrent(Letters[index - 1]);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [Letters, current]);
+
   return (
     <main className="h-screen flex flex-col items-center justify-evenly relative">
       <Link
