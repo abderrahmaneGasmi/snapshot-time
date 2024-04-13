@@ -4,68 +4,81 @@ import { chevronBack, letters } from "../helpers/svgs";
 import Link from "next/link";
 import Svg from "../assets/Svg";
 import { motion } from "framer-motion";
-import { get } from "http";
 export default function Letterspage() {
   const [Letters, setLetters] = useState([
     {
       letter: "A",
-      position: 20,
+      x: -100,
+      y: 0,
     },
     {
       letter: "B",
-      position: 20,
+      x: -100,
+      y: 0,
     },
     {
       letter: "H",
-      position: 20,
+      x: -100,
+      y: 0,
     },
     {
       letter: "K",
-      position: 10,
+      x: 0,
+      y: 0,
     },
     {
       letter: "L",
-      position: -10,
+      x: 100,
+      y: -25,
     },
 
     {
       letter: "Q",
-      position: -50,
+      x: 200,
+      y: -50,
     },
 
     {
       letter: "R",
-      position: -10,
+      x: 300,
+      y: -25,
     },
     {
       letter: "S",
-      position: 10,
+      x: 400,
+      y: 0,
     },
     {
       letter: "T",
-      position: 20,
+      x: 500,
+      y: 0,
     },
     {
       letter: "W",
-      position: 20,
+      x: 600,
+      y: 0,
     },
 
     {
       letter: "Y",
-      position: 20,
+      x: 600,
+      y: 0,
     },
     {
       letter: "Z",
-      position: 20,
+      x: 600,
+      y: 0,
     },
   ]);
   const [current, setCurrent] = useState(Letters[5]);
-  const [carousselX, setCarousselX] = useState(-300);
+  const [carousselX, setCarousselX] = useState(0);
 
   const getcurrentLetteridx = () => {
-    return Letters.indexOf(current);
+    // return the letter that has x = 200;
+    let index = Letters.findIndex((letter) => letter.x === 200);
+    return index;
   };
-  const handleLetter = (letter: { letter: string; position: number }) => {
+  const handleLetter = (letter: { letter: string; x: number; y: number }) => {
     // setCurrent(letter);
     let index = Letters.indexOf(letter);
     let currentindex = Letters.indexOf(current);
@@ -73,61 +86,60 @@ export default function Letterspage() {
       return;
     }
 
-    let diff = currentindex - index;
-    setCarousselX((prev) => {
-      return prev + diff * 100;
-    });
+    // let diff = currentindex - index;
+    // setCarousselX((prev) => {
+    //   return prev + diff * 100;
+    // });
     setCurrent(letter);
+
+    let idx = Array.from({ length: Letters.length }, (_, i) => i);
+    idx.splice(index, 1);
+
     setLetters((prev) => {
       let arr = [...prev];
-      arr[index].position = -50;
-      arr.forEach((l, i) => {
-        if (i !== index) {
-          if (Math.abs(index - i) === 1) {
-            arr[i].position = -10;
-          } else if (Math.abs(index - i) === 2) {
-            arr[i].position = 10;
-          } else {
-            arr[i].position = 20;
-          }
-        }
-      });
-      if (index === 0) {
-        arr[arr.length - 1].position = 10;
-        arr[arr.length - 2].position = -10;
-      }
-      if (index === arr.length - 1) {
-        arr[0].position = 10;
-        arr[1].position = -10;
-      }
-      if (index === 1) {
-        arr[arr.length - 1].position = -10;
-      }
-      if (index === arr.length - 2) {
-        arr[0].position = -10;
-      }
-      if (index === 2) {
-        // make the last item in first position
-        arr.unshift({ letter: arr[arr.length - 1].letter, position: 20 });
+      arr[index].x = 200;
+      arr[index].y = -50;
 
-        arr.pop();
-        setCarousselX(-100);
+      let carousel = generateCarousel(index, arr.length);
+      arr[carousel[0]].x = -100;
+      arr[carousel[0]].y = 0;
+      arr[carousel[2]].x = 100;
+      arr[carousel[2]].y = -25;
+      arr[carousel[1]].x = 0;
+      arr[carousel[1]].y = 0;
+
+      arr[carousel[3]].x = 300;
+      arr[carousel[3]].y = -25;
+      arr[carousel[4]].x = 400;
+      arr[carousel[4]].y = 0;
+      arr[carousel[5]].x = 500;
+      arr[carousel[5]].y = 0;
+      // remove all the indexes that exist in the carousel and idx
+      idx = idx.filter((n) => !carousel.includes(n));
+
+      while (idx.length > 0) {
+        let next = idx.shift();
+        if (next! < index) {
+          arr[next!].x = -100;
+          arr[next!].y = 0;
+        } else {
+          arr[next!].x = 600;
+          arr[next!].y = 0;
+        }
       }
-      if (index === arr.length - 3) {
-        // make the first item in last position
-        arr.push({ letter: arr[0].letter, position: 20 });
-        arr.shift();
-        setCarousselX(-600);
-      }
+
       return arr;
     });
   };
-  //   useEffect(() => {
-  //     if (getcurrentLetteridx() === 3) {
-  //       console.log("first");
-  //       setCarousselX(-100);
-  //     }
-  //   }, [current]);
+
+  function generateCarousel(input: number, range: number): number[] {
+    const carousel: number[] = [];
+    for (let i = input - 3; i <= input + 3; i++) {
+      const current = ((i % range) + range) % range; // This ensures the number wraps around the range
+      if (current !== input) carousel.push(current);
+    }
+    return carousel;
+  }
 
   return (
     <main className="h-screen flex flex-col items-center justify-evenly relative select-none">
@@ -166,15 +178,51 @@ export default function Letterspage() {
         </div>
       </div>
       <div
-        className="flex items-center"
+        className="flex items-center relative"
         style={{
           width: "49rem",
           height: "20rem",
           overflow: "hidden",
         }}
       >
-        {" "}
-        <motion.div
+        {Letters.map((letter, index) => (
+          <motion.div
+            key={index}
+            className={`text-7xl p-8 rounded cursor-pointer absolute left-0 w-28 ${
+              letter.y === 0
+                ? "text-gray-800  bg-gray-700"
+                : letter.y === -25
+                ? "text-gray-700  bg-gray-500"
+                : letter.y === -50
+                ? "text-gray-600 bg-white "
+                : "text-gray-800  bg-gray-800"
+            }`}
+            style={{
+              opacity:
+                letter.x === -100 || letter.x === 600 || letter.x == 500
+                  ? 0
+                  : 1,
+            }}
+            onClick={() => handleLetter(letter)}
+            initial={{
+              x: letter.x,
+              y: letter.y,
+            }}
+            animate={{
+              x: letter.x,
+              y: letter.y,
+            }}
+            transition={{
+              duration: 0.5,
+            }}
+            whileHover={{
+              scale: 1.1,
+            }}
+          >
+            {letter.letter}
+          </motion.div>
+        ))}
+        {/* <motion.div
           className="flex gap-12"
           initial={{
             x: -300,
@@ -186,95 +234,11 @@ export default function Letterspage() {
             duration: 0.5,
           }}
         >
-          {/* {showprevcaroussel().map((letter, index) => (
-            <motion.div
-              key={index}
-              className={`text-7xl p-8 rounded cursor-pointer ${
-                letter.position === 10
-                  ? "text-gray-800  bg-gray-700"
-                  : letter.position === -10
-                  ? "text-gray-700  bg-gray-400"
-                  : letter.position === -50
-                  ? "text-gray-600 bg-white "
-                  : ""
-              }`}
-              onClick={() => handleLetter(letter)}
-              initial={{
-                y: letter.position,
-              }}
-              animate={{
-                y: letter.position,
-              }}
-              transition={{
-                duration: 0.5,
-              }}
-              whileHover={{
-                scale: 1.1,
-              }}
-            >
-              {letter.letter}
-            </motion.div>
-          ))} */}
 
-          {Letters.map((letter, index) => (
-            <motion.div
-              key={index}
-              className={`text-7xl p-8 rounded cursor-pointer ${
-                letter.position === 10
-                  ? "text-gray-800  bg-gray-700"
-                  : letter.position === -10
-                  ? "text-gray-700  bg-gray-400"
-                  : letter.position === -50
-                  ? "text-gray-600 bg-white "
-                  : "text-gray-800  bg-gray-800"
-              }`}
-              onClick={() => handleLetter(letter)}
-              initial={{
-                y: letter.position,
-              }}
-              animate={{
-                y: letter.position,
-              }}
-              transition={{
-                duration: 0.5,
-              }}
-              whileHover={{
-                scale: 1.1,
-              }}
-            >
-              {letter.letter}
-            </motion.div>
-          ))}
-          {/* {shownextcaroussel().map((letter, index) => (
-            <motion.div
-              key={index}
-              className={`text-7xl p-8 rounded cursor-pointer ${
-                letter.position === 10
-                  ? "text-gray-800  bg-gray-700"
-                  : letter.position === -10
-                  ? "text-gray-700  bg-gray-400"
-                  : letter.position === -50
-                  ? "text-gray-600 bg-white "
-                  : ""
-              }`}
-              onClick={() => handleLetter(letter)}
-              initial={{
-                y: letter.position,
-              }}
-              animate={{
-                y: letter.position,
-              }}
-              transition={{
-                duration: 0.5,
-              }}
-              whileHover={{
-                scale: 1.1,
-              }}
-            >
-              {letter.letter}
-            </motion.div>
-          ))} */}
-        </motion.div>
+
+
+
+        </motion.div> */}
       </div>
     </main>
   );
