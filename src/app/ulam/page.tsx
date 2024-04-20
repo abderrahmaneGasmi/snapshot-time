@@ -10,10 +10,10 @@ export default function Ulamspage() {
   const [ctx, setctx] = useState<CanvasRenderingContext2D | null>(null);
   const [loading, setLoading] = useState(true);
   const [vars, setVars] = useState({
-    canvaswidth: 900,
+    canvaswidth: 1000,
     canvasheight: 600,
     square: 1,
-    iterate: (900 * 600) / 1,
+    iterate: 1000 * 1000,
   });
   const box = React.useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -29,6 +29,13 @@ export default function Ulamspage() {
         canvas.height = vars.canvasheight;
         setcanva(canvas);
       } else {
+        // if (
+        //   canva.width !== vars.canvaswidth ||
+        //   canva.height !== vars.canvasheight
+        // ) {
+        //   canva.width = vars.canvaswidth;
+        //   canva.height = vars.canvasheight;
+        // }
         box.current.appendChild(canva);
         if (!ctx) {
           const ctxv = canva.getContext("2d");
@@ -118,38 +125,86 @@ export default function Ulamspage() {
         />
         return
       </Link>
-      <div className="flex flex-col gap-8 items-center">
-        <div className="text-pink-50 text-7xl ">Ulam spiral</div>
-
+      <div
+        className="flex flex-col gap-8 items-center w-full 
+      "
+      >
         <div
-          className={`rounded-md relative
+          className="grid  gap-8 w-full
+        "
+          style={{ gridTemplateColumns: "5fr 2fr" }}
+        >
+          <div className="flex flex-col items-center gap-4 justify-self-end ">
+            <div className="text-pink-50 text-7xl ">Ulam spiral</div>
+
+            <div
+              className={`rounded-md relative
             ${"border-2 border-gray-50 "}
             `}
-          style={{
-            display: loading || !canva ? "block" : "none",
-          }}
-        >
-          {" "}
-          {(!canva || loading) && (
-            <div
-              className="flex items-center justify-center skeltoneffect"
               style={{
-                width: vars.canvaswidth + "px",
-                height: vars.canvasheight + "px",
+                display: loading || !canva ? "block" : "none",
+              }}
+            >
+              {" "}
+              {(!canva || loading) && (
+                <div
+                  className="flex items-center justify-center skeltoneffect"
+                  style={{
+                    width: vars.canvaswidth + "px",
+                    height: vars.canvasheight + "px",
+                  }}
+                ></div>
+              )}
+            </div>
+
+            <div
+              ref={box}
+              className={`rounded-md relative
+            ${"border-2 border-gray-50 "}
+            `}
+              style={{
+                display: loading || !canva ? "none" : "block",
               }}
             ></div>
-          )}
+          </div>
+          <div className="flex flex-col gap-8">
+            <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800 p-4 mx-auto">
+              Variables
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
+                size : {vars.square}
+              </div>
+              <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
+                1
+              </div>
+              <input
+                type="range"
+                value={vars.square}
+                className="slider"
+                step={1}
+                min={1}
+                max={10}
+                onChange={(e) => {
+                  setVars((prev) => {
+                    return {
+                      ...prev,
+                      square: parseInt(e.target.value),
+                      iterate:
+                        (vars.canvaswidth * vars.canvaswidth) /
+                        parseInt(e.target.value),
+                    };
+                  });
+                  // loose focus
+                  e.target.blur();
+                }}
+              />
+              <div className="text-pink-50 text-2xl bg-indigo-900 p-2 rounded-md cursor-pointer hover:bg-indigo-800">
+                10
+              </div>
+            </div>
+          </div>
         </div>
-
-        <div
-          ref={box}
-          className={`rounded-md relative
-            ${"border-2 border-gray-50 "}
-            `}
-          style={{
-            display: loading || !canva ? "none" : "block",
-          }}
-        ></div>
       </div>
     </main>
   );
