@@ -9,6 +9,7 @@ import {
   mine,
   search,
   snake,
+  spiral,
   tictactoe,
 } from "./helpers/svgs";
 import { useState } from "react";
@@ -83,6 +84,12 @@ export default function Home() {
           onMouseLeave={() => setGame("")}
         >
           <Icon path={letters.path} view={letters.viewBox} url="/letters" />
+        </div>
+        <div
+          onMouseEnter={() => setGame("Ulam Spiral")}
+          onMouseLeave={() => setGame("")}
+        >
+          <Icon path={spiral.path} view={spiral.viewBox} url="/ulam" />
         </div>
       </div>
     </main>
