@@ -11,6 +11,7 @@ import {
   snake,
   spiral,
   tictactoe,
+  tree,
 } from "./helpers/svgs";
 import { useState } from "react";
 import Link from "next/link";
@@ -90,6 +91,12 @@ export default function Home() {
           onMouseLeave={() => setGame("")}
         >
           <Icon path={spiral.path} view={spiral.viewBox} url="/ulam" />
+        </div>
+        <div
+          onMouseEnter={() => setGame("Fractal Trees")}
+          onMouseLeave={() => setGame("")}
+        >
+          <Icon path={tree.path} view={tree.viewBox} url="/fact" />
         </div>
       </div>
     </main>
