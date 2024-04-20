@@ -41,3 +41,40 @@ export function calculateDelay(speed: number) {
   console.log(output);
   return output;
 }
+export function isPrime(num: number): boolean {
+  if (num < 2) return false;
+  if (num === 2) return true;
+  if (num % 2 === 0) return false;
+  for (let i = 3, sqrt = Math.sqrt(num); i <= sqrt; i += 2) {
+    if (num % i === 0) return false;
+  }
+  return true;
+}
+export function getnextdirection(
+  direction: "right" | "up" | "left" | "down",
+  Dtype = "anticlockwise" as "clockwise" | "anticlockwise"
+) {
+  if (Dtype === "clockwise") {
+    switch (direction) {
+      case "right":
+        return "down";
+      case "down":
+        return "left";
+      case "left":
+        return "up";
+      case "up":
+        return "right";
+    }
+  } else {
+    switch (direction) {
+      case "right":
+        return "up";
+      case "up":
+        return "left";
+      case "left":
+        return "down";
+      case "down":
+        return "right";
+    }
+  }
+}
