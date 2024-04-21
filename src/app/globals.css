@@ -40,6 +40,27 @@ html {
     inset -20px 0 80px #0ff, inset 20px 0 300px #f0f, inset -20px 0 300px #0ff,
     0 0 50px #fff, -10px 0 80px #f0f, 10px 0 80px #0ff;
 }
+.blueglobe {
+  display: block;
+  position: fixed;
+  width: 300px;
+  aspect-ratio: 1;
+  left: 50%;
+  top: 10%;
+  transform: translateX(-50%);
+  z-index: -1;
+  /* color: honeydew; */
+  transform: translateX(-50%) translateY(-50%);
+  background-image: radial-gradient(
+    at 50% 50% in oklch,
+    color-mix(in oklch, skyblue, blue 80%),
+    color-mix(in oklch, skyblue, blue 10%) 19%,
+    color-mix(in oklch, skyblue, blue 20%) 20%,
+    color-mix(in oklch, skyblue, blue 80%),
+    color-mix(in oklch, blue, black 50%) 55%,
+    transparent 70%
+  );
+}
 
 .skeltoneffect {
   background: linear-gradient(
